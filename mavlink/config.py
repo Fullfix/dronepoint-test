@@ -10,6 +10,16 @@ class DronepointConfig:
     DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
     DRONEPOINT_CONNECTION = ''
 
-    #Flight
+    # Flight
     FLIGHT_DISTANCE = 0.00027
     FLIGHT_ALT = 50
+
+    # State
+    IDLE = 'idle'
+    GETTING_FROM_USER = 'getting_from_user'
+    TAKING_BATTERY = 'taking_battery'
+    LOADING_DRONE = 'loading_drone'
+    FLYING = 'flying'
+    UNLOADING_DRONE = 'unloading_drone'
+    GIVING_BATTERY = 'giving_battery'
+    UNLOADING_TO_USER = 'unloading_to_user'  

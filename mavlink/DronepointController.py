@@ -6,7 +6,7 @@ import threading
 from pymavlink import mavutil, mavwp
 from pymavlink.mavutil import mavlink
 import math
-from config import DronepointConfig
+from .config import DronepointConfig
 
 
 class DronepointController():

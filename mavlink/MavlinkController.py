@@ -6,9 +6,9 @@ import threading
 from pymavlink import mavutil, mavwp
 from pymavlink.mavutil import mavlink
 import math
-from config import DronepointConfig
-from MavlinkListener import MavlinkListener
-from DronepointController import DronepointController
+from .config import DronepointConfig
+from .MavlinkListener import MavlinkListener
+from .DronepointController import DronepointController
 
 logging.basicConfig(level=logging.INFO)
 wp = mavwp.MAVWPLoader()
