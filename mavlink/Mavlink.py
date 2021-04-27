@@ -16,6 +16,9 @@ class Mavlink(MavlinkController):
         self.EXECUTING = False
         self.STATE = config.IDLE
     
+    def test_command(self):
+        print('TEST')
+    
     def execute_test(self):
         self.EXECUTING = True
         self.STATE = config.GETTING_FROM_USER
@@ -52,3 +55,6 @@ class Mavlink(MavlinkController):
             "executing": self.EXECUTING,
             "state": self.STATE,
         }
+
+if __name__ == '__main__':
+    mavlink = Mavlink()

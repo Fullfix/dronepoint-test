@@ -1,5 +1,6 @@
 import { Box, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core'
 import React from 'react'
+import { formattedValue } from '../utils/display';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -15,6 +16,10 @@ const useStyles = makeStyles(theme => ({
 
 const DroneInfo = ({ data }) => {
     const classes = useStyles();
+    const displayData = {
+        ...data,
+        pos: `[${data.pos[0]}, ${data.pos[1]}]`,
+    }
     return (
         <Box className={classes.root}>
             <Table size="small">
@@ -29,10 +34,10 @@ const DroneInfo = ({ data }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.entries(data).map(([key, value]) => (
+                    {Object.entries(displayData).map(([key, value]) => (
                         <TableRow key={key}>
                             <TableCell>{key}</TableCell>
-                            <TableCell>{value}</TableCell>
+                            <TableCell>{formattedValue(value)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

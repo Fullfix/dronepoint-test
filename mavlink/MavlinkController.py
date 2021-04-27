@@ -16,11 +16,12 @@ wp = mavwp.MAVWPLoader()
 
 class MavlinkController(DronepointConfig, MavlinkListener, DronepointController):
     def __init__(self):
+        DronepointController.__init__(self)
         self.url = os.environ.get('MAVLINK_ENDPOINT', self.DRONE_CONNECTION)
         self.mavconn = mavutil.mavlink_connection(self.url, source_system=255)
-        print('Mavlink initialized. Waiting for connection')
+        print('Drone initialized. Waiting for connection')
         self.mavconn.wait_heartbeat()
-        print('Connected to Mavlink')
+        print('Connected to Drone')
     
     def listen_drone_messages(self):
         thread_drone_msg = threading.Thread(target=self.receive_drone_messages)
