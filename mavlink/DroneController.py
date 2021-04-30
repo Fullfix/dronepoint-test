@@ -183,8 +183,8 @@ class DroneController:
             2, # Precision land mode 
             0, 
             math.nan, # Angle
-            self.pos[0], # Lat 
-            self.pos[1], # Lon
+            config.DRONEPOINT_LAT, # Lat 
+            config.DRONEPOINT_LON, # Lon
             0, # Alt
         )
         wp.add(p)
