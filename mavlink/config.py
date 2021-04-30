@@ -16,12 +16,11 @@ class DronepointConfig:
 
     # Flight
     FLIGHT_DISTANCE = 0.00027
-    FLIGHT_ALT = 50
+    FLIGHT_ALT = 20
 
     # State
     IDLE = 'idle'
     GETTING_FROM_USER = 'getting_from_user'
-    TAKING_BATTERY = 'taking_battery'
     LOADING_DRONE = 'loading_drone'
     FLYING = 'flying'
     UNLOADING_DRONE = 'unloading_drone'
@@ -43,3 +42,11 @@ class DronepointConfig:
     STATE_RESET = 11
     STATE_STANDBY = 12
     STATE_ERROR = 13
+
+    # DP Delay (seconds)
+    DRONEPOINT_DELAY = 1
+
+    # DP Pos
+    DRONEPOINT_LAT = 55.7040408
+    DRONEPOINT_LON = 37.7244345
+    DRONEPOINT_ALT = 150 

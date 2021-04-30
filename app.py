@@ -1,11 +1,15 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit, send
 import time
+import logging
 from mavlink.Mavlink import Mavlink
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 mavlink = Mavlink()
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 @app.route('/')
 def index():

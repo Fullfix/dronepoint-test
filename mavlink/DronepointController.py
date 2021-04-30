@@ -11,35 +11,68 @@ from .config import DronepointConfig as config
 
 class DronepointController:
     def __init__(self):
-        self.dp_url = config.DRONEPOINT_CONNECTION
-        self.dp_state = config.STATE_STANDBY
+        # Dronepoint connection url
+        url = config.DRONEPOINT_CONNECTION
+        # Dronepoint current custom mode
+        self.custom_mode = config.STATE_STANDBY
+        # Mavlink message handlers
+        self.handlers = {
+            0: self.HEARTBEAT_HANDLER
+        }
         try:
-            self.mavdp = mavutil.mavlink_connection(self.dp_url, source_system=255)
+            self.mavconn = mavutil.mavlink_connection(url, source_system=255)
+            # Debug
             print('Dronepoint initialized. Waiting for connection')
-            self.mavdp.wait_heartbeat()
-            print('here')
-            print(self.mavdp.recv_match().to_dict())
+            # Wait heartbeat
+            self.mavconn.wait_heartbeat()
+            # Debug
+            print(self.mavconn.recv_match().to_dict())
             print('Connected to Dronepoint')
+            # Start listening mavlink messages
             thread_listen = threading.Thread(target=self.listen_messages)
             thread_listen.start()
-            time.sleep(3)
-            self.test_com()
+            # Cooldown
+            time.sleep(1)
+            # self.main()
         except BaseException as e:
-            self.mavdp = None
+            self.mavconn = None
+            # Debug
             print('Failed to connect to Dronepoint')
             raise e
     
-    def handle_message(self, msg):
-        if msg['msgid'] == 0:
-            state = msg['custom_mode']
-            if self.dp_state != state:
-                print(f'Changed DP State to {state}')
-            self.dp_state = state
+    # Test code
+    def main(self):
+        # Debug
+        print('Started Dronepoint commands')
+        self.execute_command(
+            config.STATE_UNLOADING_DRONE,
+            0, 3, 0, 3
+        )
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+        self.execute_command(
+            config.STATE_UNLOADING_TO_USER,
+            0, 3, 0,
+        )
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+        self.execute_command(
+            config.STATE_GETTING_FROM_USER,
+            0, 3, 0,
+        )
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+        self.execute_command(
+            config.STATE_LOADING_DRONE,
+            0, 3, 0, 3
+        )
     
+    # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
-        print('Start Watching Messages')
+        print('Started watching messages')
         while True:
-            msg = self.mavdp.recv_match(blocking=True)
+            msg = self.mavconn.recv_match(blocking=True)
+            # Style messages
             msg_dict = msg.to_dict()
             msg_dict['msgid'] = msg.get_msgId()
             msg_dict['sysid'] = msg.get_srcSystem()
@@ -49,83 +82,43 @@ class DronepointController:
             for key in msg_dict:
                 if isinstance(msg_dict[key], float) and math.isnan(msg_dict[key]):
                     msg_dict[key] = None
-            self.handle_message(msg_dict)
+            # Check if handler exists
+            if msg_dict['msgid'] in self.handlers.keys():
+                # Execute handlers
+                self.handlers[msg_dict['msgid']](msg_dict)
 
-    def test_com(self):
-        self.mavdp.mav.command_long_send(
-            self.mavdp.target_system, 
-            self.mavdp.target_component,
+    # Execute Dronepoint command via command long
+    def execute_command(self, mode, param1=0, param2=0, param3=0, param4=0, param5=0):
+        # Send command
+        self.mavconn.mav.command_long_send(
+            self.mavconn.target_system,
+            self.mavconn.target_component,
             mavlink.MAV_CMD_DO_SET_MODE,
             1,
             mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-            config.STATE_GETTING_FROM_USER,
-            0,
-            0,
-            0,
-            0,
-            0,
-        )
-        print('SENT COMMAND')
-        time.sleep(4)
-        while True:
-            if self.dp_state == config.STATE_STANDBY:
-                break
-            print('Executing Command')
-            time.sleep(2)
-        print('Command finished')
-
-    def execute_command(self, mode, *args):
-        self.mavdp.set_mode(
-            mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
             mode,
-            *args,
+            param1, param2, param3,
+            param4, param5,
         )
+        
+        # Wait until dronepoint custom_mode is in STANDBY mode (12)
+        time.sleep(1)
         while True:
-            # Wait for ACK command
-            ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True)
-            ack_msg = ack_msg.to_dict()
-
-            # Check if command in the same in `set_mode`
-            if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
-                continue
-
-            # Print the ACK result !
-            print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
-            break
-
-    def dronepoint_action(self, mode, *args):
-        try:
-            # self.mavconn.mav.command_long_send(
-            #     self.mavconn.target_system, 
-            #     self.mavconn.target_component, 
-            #     mavlink.MAV_CMD_DO_SET_MODE, 
-            #     1, 
-            #     mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, 
-            #     mode, 
-            #     3, 0, 0, 0, 0)
-            print('Dronepoint action executed successfully')
-        except BaseException as e:
-            print(e)
+            i = 1
+            if self.custom_mode == config.STATE_STANDBY:
+                break
+            # Debug
+            if i % 10 == 0:
+                print('Executing command')
+            # Cooldown
+            time.sleep(1)
+        # Debug
+        print('Command finished')
     
-    def loading_drone_action(self):
-        self.dronepoint_action(self.CUSTOM_MODE_LOADING_DRONE)
-        time.sleep(10)
-    
-    def unloading_drone_action(self):
-        self.dronepoint_action(self.CUSTOM_MODE_UNLOADING_DRONE)
-        time.sleep(10)
-    
-    def unloading_to_user(self):
-        self.dronepoint_action(self.CUSTOM_MODE_UNLOADING_TO_USER)
-        time.sleep(10)
-    
-    def getting_from_user(self):
-        self.dronepoint_action(self.CUSTOM_MODE_GETTING_FROM_USER)
-        time.sleep(10)
-    
-    def taking_battery(self):
-        self.dronepoint_action(self.CUSTOM_MODE_CHANGING_BATTERY)
-
-    def giving_battery(self):
-        self.dronepoint_action(self.CUSTOM_MODE_CHANGING_BATTERY)
-    
+    # Heartbeat listener (0): update dronepoint's custom mode
+    def HEARTBEAT_HANDLER(self, msg):
+        state = msg['custom_mode']
+        if self.custom_mode != state:
+            self.custom_mode = state
+            # Debug
+            print(f'Changed to custom mode {state}')

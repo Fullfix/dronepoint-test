@@ -1,5 +1,5 @@
 from mavlink.Mavlink import Mavlink
-from mavlink.DPController import DronepointController
+from mavlink.DronepointController import DronepointController
 import socket
 
 def main():

@@ -10,9 +10,10 @@ const useStyles = makeStyles(theme => ({
 
 const droneSize = 80;
 
-const DroneMap = ({ lat, lon }) => {
+const DroneMap = ({ lat, lon, dpLat, dpLon }) => {
     const classes = useStyles();
     const pos = [lat, lon];
+    const dpPos = [dpLat, dpLon];
     
     return (
         <Box className={classes.root}>
@@ -28,6 +29,7 @@ const DroneMap = ({ lat, lon }) => {
                         radius: 20
                     },
                 }}/>
+                <Placemark geometry={dpPos} />
             </Map>
         </Box>
     )

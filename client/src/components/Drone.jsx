@@ -38,12 +38,13 @@ const Drone = () => {
     }
 
     const [lat, lon] = data.pos;
+    const [dpLat, dpLon] = data.dronepoint_pos;
 
     return (
         <Box className={classes.root}>
             <Box className={classes.container}>
                 <DroneInfo data={data}/>
-                <DroneMap lat={lat} lon={lon} />
+                <DroneMap lat={lat} lon={lon} dpLat={dpLat} dpLon={dpLon} />
             </Box>
             <Box className={classes.actionsBox}>
                 <Button variant="contained" color="primary" size="large"
