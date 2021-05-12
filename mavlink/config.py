@@ -15,8 +15,8 @@ class DronepointConfig:
     # DRONEPOINT_CONNECTION = 'udpin:192.168.194.198:14590'
 
     # Flight
-    FLIGHT_DISTANCE = 0.00027
-    FLIGHT_ALT = 20
+    FLIGHT_DISTANCE = 0.00027 * 5 / 3
+    FLIGHT_ALT = 50
 
     # State
     IDLE = 'idle'

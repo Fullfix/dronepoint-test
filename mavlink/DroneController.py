@@ -112,12 +112,15 @@ class DroneController:
         self.start_flight_mission()
         # Cooldown
         time.sleep(3)
+        # Time Counter
+        start_time = time.time()
+
         while self.armed:
             # Debug
             time.sleep(5)
             print('Flying')
         # Debug
-        print('Finished Flight')
+        print(f'Finished Flight in {time.time() - start_time} s')
 
     # Initiate flight mission
     def start_flight_mission(self):

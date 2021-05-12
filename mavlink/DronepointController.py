@@ -48,24 +48,24 @@ class DronepointController:
             config.STATE_UNLOADING_DRONE,
             0, 3, 0, 3
         )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
-        self.execute_command(
-            config.STATE_UNLOADING_TO_USER,
-            0, 3, 0,
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
-        self.execute_command(
-            config.STATE_GETTING_FROM_USER,
-            0, 3, 0,
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
-        self.execute_command(
-            config.STATE_LOADING_DRONE,
-            0, 3, 0, 3
-        )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
+        # self.execute_command(
+        #     config.STATE_UNLOADING_TO_USER,
+        #     0, 3, 0,
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
+        # self.execute_command(
+        #     config.STATE_GETTING_FROM_USER,
+        #     0, 3, 0,
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
+        # self.execute_command(
+        #     config.STATE_LOADING_DRONE,
+        #     0, 3, 0, 3
+        # )
     
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
@@ -102,7 +102,9 @@ class DronepointController:
         )
         
         # Wait until dronepoint custom_mode is in STANDBY mode (12)
-        time.sleep(1)
+        time.sleep(3)
+        # Time counter
+        start_time = time.time()
         while True:
             i = 1
             if self.custom_mode == config.STATE_STANDBY:
@@ -113,7 +115,7 @@ class DronepointController:
             # Cooldown
             time.sleep(1)
         # Debug
-        print('Command finished')
+        print(f'Command {mode} finished in time {time.time() - start_time} s')
     
     # Heartbeat listener (0): update dronepoint's custom mode
     def HEARTBEAT_HANDLER(self, msg):
