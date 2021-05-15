@@ -1,0 +1,14 @@
+version: '3'
+services:
+  python-server:
+    image: python-server
+    ports:
+      - '5000:5000'
+      - '0.0.0.0:14540:14540/udp'
+    env_file: .env
+    build: .
+  react-server:
+    image: react-server
+    ports:
+      - '3000:3000'
+    build: ./client
