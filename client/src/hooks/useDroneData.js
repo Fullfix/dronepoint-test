@@ -3,6 +3,8 @@ import { sendGetDataEvent, sendTestEvent, subscribeConnectEvent, subscribeDataEv
 
 export const useDroneData = (timeout=2000) => {
     const [data, setData] = useState(null);
+    const [droneConnected, setDroneConnected] = useState(false);
+    const [dronepointConnected, setDronepointConnected] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const handleConnectEvent = () => {
@@ -11,6 +13,10 @@ export const useDroneData = (timeout=2000) => {
     }
 
     const handleDataEvent = (data) => {
+        if (!data || !data.connection) return
+        setDroneConnected(data.connection.drone);
+        setDronepointConnected(data.connection.dronepoint);
+        delete data.connection;
         setData(data);
     }
     
@@ -26,5 +32,7 @@ export const useDroneData = (timeout=2000) => {
         data: data,
         loading: loading,
         startTest: sendTestEvent,
+        connection: { drone: droneConnected, dronepoint: dronepointConnected },
+        isConnected: droneConnected && dronepointConnected,
     }
 }

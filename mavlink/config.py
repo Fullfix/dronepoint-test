@@ -12,7 +12,7 @@ class DronepointConfig:
     # Connection
     DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
     DRONEPOINT_CONNECTION = 'udpin:192.168.194.34:14590'
-    # DRONEPOINT_CONNECTION = 'udpin:192.168.194.198:14590'
+    CONNECTION_TIMEOUT = 3
 
     # Flight
     FLIGHT_DISTANCE = 0.00027 * 5 / 3

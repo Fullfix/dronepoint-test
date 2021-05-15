@@ -21,7 +21,11 @@ def send_message():
 
 @socketio.on('test')
 def start_test():
-    mavlink.test()
+    if mavlink.connected:
+        print(mavlink.connected, mavlink.connected())
+        # mavlink.test()
+    else:
+        print("Can't start test")
 
 if __name__ == "__main__":
     socketio.run(app)

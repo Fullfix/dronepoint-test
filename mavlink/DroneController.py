@@ -1,5 +1,6 @@
 import os
 import logging
+from socket import timeout
 import time
 import threading
 
@@ -15,6 +16,8 @@ class DroneController:
     def __init__(self):
         # Drone connection url
         url = config.DRONE_CONNECTION
+        # Is connected
+        self.connected = False
         # Drone parameters
         self.pos = [0, 0]
         self.alt = 0
@@ -26,30 +29,34 @@ class DroneController:
             mavlink.MAVLINK_MSG_ID_EXTENDED_SYS_STATE: self.EXTENDED_SYS_STATE_HANDLER,
             mavlink.MAVLINK_MSG_ID_HEARTBEAT: self.HEARTBEAT_HANDLER,
         }
-        try:
-            self.mavconn = mavutil.mavlink_connection(url, source_system=255)
-            # Debug
-            print('Drone initialized. Waiting for connection')
-            # Wait heartbeat
-            self.mavconn.wait_heartbeat()
-            # Debug
-            print('Connected to Drone')
-            # Start listening mavlink messages
-            thread_listen = threading.Thread(target=self.listen_messages)
-            thread_listen.start()
-            # Cooldown
-            time.sleep(1)
-        except BaseException as e:
-            self.mavconn = None
-            # Debug
-            print('Failed to connect to Drone')
-            raise e
+        self.mavconn = mavutil.mavlink_connection(url, source_system=255)
+        # Debug
+        print('Drone initialized. Waiting for connection')
+        # Start listening mavlink messages
+        thread_listen = threading.Thread(target=self.listen_messages)
+        thread_listen.start()
+        # Cooldown
+        time.sleep(1)
     
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
         print('Started watching messages')
         while True:
-            msg = self.mavconn.recv_match(blocking=True)
+            msg = self.mavconn.recv_match(blocking=True, timeout=config.CONNECTION_TIMEOUT)
+            # Check if msg is None
+            if not msg:
+                # Set state to disconnected
+                if self.connected == True:
+                    # Debug
+                    print('Drone disconnected')
+                self.connected = False
+                continue
+            else:
+                if self.connected == False:
+                    # Debug
+                    print('Drone connected')
+                # Set state to connected
+                self.connected = True
             # Style messages
             msg_dict = msg.to_dict()
             msg_dict['msgid'] = msg.get_msgId()

@@ -21,6 +21,10 @@ class Mavlink:
         # Dronepoint Controller
         self.dronepoint_controller = DronepointController()
 
+    @property
+    def connected(self):
+        return self.drone_controller.connected and self.dronepoint_controller.connected
+
     # Main Test
     def execute_test(self):
         self.executing = True
@@ -103,7 +107,11 @@ class Mavlink:
             "landing_state": self.drone_controller.landed_state,
             "executing": self.executing,
             "state": self.state,
-            "dronepoint_pos": [config.DRONEPOINT_LAT, config.DRONEPOINT_LON]
+            "dronepoint_pos": [config.DRONEPOINT_LAT, config.DRONEPOINT_LON],
+            "connection": {
+                "drone": self.drone_controller.connected,
+                "dronepoint": self.dronepoint_controller.connected,
+            },
         }
 
 if __name__ == '__main__':

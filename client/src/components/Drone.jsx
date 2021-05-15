@@ -6,7 +6,7 @@ import DroneMap from './DroneMap';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        
+        height: '100%',
     },
     container: {
         display: 'flex',
@@ -25,11 +25,18 @@ const useStyles = makeStyles(theme => ({
     state: {
         fontSize: 32,
     },
+    disconnectBox: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 }));
 
 const Drone = () => {
     const classes = useStyles();
-    const { loading, data, startTest } = useDroneData(100);
+    const { loading, data, startTest, isConnected, connection } = useDroneData(100);
 
     if (loading || !data) {
         return (
@@ -39,6 +46,20 @@ const Drone = () => {
 
     const [lat, lon] = data.pos;
     const [dpLat, dpLon] = data.dronepoint_pos;
+
+    if (!isConnected) return (
+        <Box className={classes.root}>
+            <Box className={classes.disconnectBox}>
+                <Typography variant="h2">Not connected</Typography>
+                <Typography variant="h2">
+                    Drone: {connection.drone ? 'Connected' : 'Disconnected'}
+                </Typography>
+                <Typography variant="h2">
+                    Dronepoint: {connection.dronepoint ? 'Connected' : 'Disconnected'}
+                </Typography>
+            </Box>
+        </Box>
+    )
 
     return (
         <Box className={classes.root}>

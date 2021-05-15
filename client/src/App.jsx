@@ -1,7 +1,8 @@
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core'
-import React from 'react'
+import React, { useContext } from 'react'
 import { YMaps } from 'react-yandex-maps';
 import Drone from './components/Drone';
+import { useDroneData } from './hooks/useDroneData';
 
 const theme = createMuiTheme({
     palette: {
