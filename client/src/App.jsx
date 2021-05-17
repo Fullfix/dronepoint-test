@@ -1,8 +1,10 @@
-import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core'
+import { createMuiTheme, makeStyles, ThemeProvider, Typography } from '@material-ui/core'
 import React, { useContext } from 'react'
+import { ToastContainer } from 'react-toastify';
 import { YMaps } from 'react-yandex-maps';
 import Drone from './components/Drone';
-import { useDroneData } from './hooks/useDroneData';
+import LoginPage from './components/LoginPage';
+import DronepointProvider, { DronepointContext } from './contexts/DronepointProvider';
 
 const theme = createMuiTheme({
     palette: {
@@ -44,13 +46,26 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+const Main = () => {
+  const { isAuthenticated, loading } = useContext(DronepointContext);
+  
+  if (loading) return (
+    <Typography>Loading</Typography>
+  )
+
+  return isAuthenticated ? <Drone /> : <LoginPage />
+}
+
 const App = () => {
     const classes = useStyles();
     return (
         <ThemeProvider theme={theme}>
+          <DronepointProvider>
             <YMaps>
-                <Drone />
+              <ToastContainer />
+              <Main />
             </YMaps>
+          </DronepointProvider>
         </ThemeProvider>
     )
 }

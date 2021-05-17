@@ -1,6 +1,6 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core'
-import React, { useMemo } from 'react'
-import { useDroneData } from '../hooks/useDroneData';
+import React, { useContext, useMemo } from 'react'
+import { DronepointContext } from '../contexts/DronepointProvider';
 import DroneInfo from './DroneInfo';
 import DroneMap from './DroneMap';
 
@@ -36,9 +36,9 @@ const useStyles = makeStyles(theme => ({
 
 const Drone = () => {
     const classes = useStyles();
-    const { loading, data, startTest, isConnected, connection } = useDroneData(100);
+    const { data, startTest, isConnected, connection } = useContext(DronepointContext);
 
-    if (loading || !data) {
+    if (!data) {
         return (
             <div>Loading</div>
         )
