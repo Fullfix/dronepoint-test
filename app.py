@@ -26,22 +26,22 @@ log.setLevel(logging.ERROR)
 @cross_origin()
 def login():
     data = request.get_json()
-    if data['password'] == password:
-        return { "text": 'Authenticated' }
+    # if data['password'] == password:
+    #     return { "text": 'Authenticated' }
     return { "text": "Wrong password" }, 400
 
 # Get mavlink data
 @socketio.on('getdata')
 def send_message(json):
-    if json['password'] != password:
-        return emit('error', 'Invalid password')
+    # if json['password'] != password:
+    #     return emit('error', 'Invalid password')
     return emit('data', mavlink.get_data())
 
 # Start text
 @socketio.on('test')
 def start_test(json):
-    if json['password'] != password:
-        return emit('error', 'Invalid password')
+    # if json['password'] != password:
+    #     return emit('error', 'Invalid password')
     if mavlink.connected:
         print(mavlink.connected)
         mavlink.test()

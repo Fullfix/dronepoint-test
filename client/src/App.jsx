@@ -53,7 +53,7 @@ const Main = () => {
     <Typography>Loading</Typography>
   )
 
-  return isAuthenticated ? <Drone /> : <LoginPage />
+  return <Drone />
 }
 
 const App = () => {
