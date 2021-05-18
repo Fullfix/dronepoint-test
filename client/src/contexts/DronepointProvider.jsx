@@ -78,7 +78,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         <DronepointContext.Provider value={{
             data: data,
             loading: loading,
-            startTest: sendTestEvent,
+            startTest: () => sendTestEvent(getPassword()),
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
             isConnected: droneConnected && dronepointConnected,
             authenticate: authenticate,

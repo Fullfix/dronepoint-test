@@ -42,7 +42,7 @@ class DroneController:
     def listen_messages(self):
         print('Started watching messages')
         while True:
-            msg = self.mavconn.recv_match(blocking=True, timeout=config.CONNECTION_TIMEOUT)
+            msg = self.mavconn.recv_match(blocking=True, timeout=config.DRONE_CONNECTION_TIMEOUT)
             # Check if msg is None
             if not msg:
                 # Set state to disconnected

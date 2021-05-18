@@ -29,7 +29,7 @@ class Mavlink:
     def execute_test(self):
         self.executing = True
 
-        cell = [0, 3, 0]
+        cell = [0, 3, 3]
         self.execute_iteration(cell)
 
         self.executing = False

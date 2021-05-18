@@ -17,9 +17,9 @@ password = config['SECRET_CODE']
 # Init mavlink
 mavlink = Mavlink()
 
-# # Disable logging
-# log = logging.getLogger('werkzeug')
-# log.setLevel(logging.ERROR)
+# Disable logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # Compare passwords
 @app.route('/login', methods=['POST'])
@@ -43,8 +43,8 @@ def start_test(json):
     if json['password'] != password:
         return emit('error', 'Invalid password')
     if mavlink.connected:
-        print(mavlink.connected, mavlink.connected())
-        # mavlink.test()
+        print(mavlink.connected)
+        mavlink.test()
     else:
         print("Can't start test")
 

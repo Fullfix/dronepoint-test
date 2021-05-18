@@ -24,6 +24,9 @@ class DronepointController:
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
         print('Dronepoint initialized. Waiting for connection')
+        # Start sending heartbeat
+        thread_send = threading.Thread(target=self.send_heartbeats)
+        thread_send.start()
         # Start listening mavlink messages
         thread_listen = threading.Thread(target=self.listen_messages)
         thread_listen.start()
@@ -36,8 +39,8 @@ class DronepointController:
         # Debug
         print('Started Dronepoint commands')
         self.execute_command(
-            config.STATE_UNLOADING_DRONE,
-            0, 3, 0, 3
+            config.STATE_GETTING_FROM_USER,
+            0, 3, 0,
         )
         # # Delay
         # time.sleep(config.DRONEPOINT_DELAY)
@@ -58,16 +61,28 @@ class DronepointController:
         #     0, 3, 0, 3
         # )
     
+    # Send random heartbeats to receive messages from Dronepoint
+    def send_heartbeats(self):
+        while True:
+            self.mavconn.mav.heartbeat_send(
+                0,
+                0,
+                0,
+                0,
+                0,
+            )
+            time.sleep(1)
+
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
         print('Started watching messages')
         while True:
-            msg = self.mavconn.recv_match(blocking=True, timeout=config.CONNECTION_TIMEOUT)
+            msg = self.mavconn.recv_match(blocking=True, timeout=config.DRONEPOINT_CONNECTION_TIMEOUT)
             # Check if msg is None
             if not msg:
                 if self.connected == True:
                     # Debug
-                    print('Drone disconnected')
+                    print('Dronepoint disconnected')
                 # Set state to disconnected
                 self.connected = False
                 continue
