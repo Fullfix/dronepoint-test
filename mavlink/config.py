@@ -16,7 +16,7 @@ class DronepointConfig:
     DRONEPOINT_CONNECTION_TIMEOUT = 3
 
     # Flight
-    FLIGHT_DISTANCE = 0.00027 * 5 / 3
+    FLIGHT_DISTANCE = 0.0009 # 100 meters
     FLIGHT_ALT = 50
 
     # State

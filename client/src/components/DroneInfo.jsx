@@ -19,6 +19,7 @@ const DroneInfo = ({ data }) => {
     const displayData = {
         ...data,
         pos: `[${data.pos[0]}, ${data.pos[1]}]`,
+        dronepoint_pos: `[${data.dronepoint_pos[0]}, ${data.dronepoint_pos[1]}]`,
     }
     return (
         <Box className={classes.root}>

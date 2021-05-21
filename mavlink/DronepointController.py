@@ -82,7 +82,8 @@ class DronepointController:
             if not msg:
                 if self.connected == True:
                     # Debug
-                    print('Dronepoint disconnected')
+                    # print('Dronepoint disconnected')
+                    pass
                 # Set state to disconnected
                 self.connected = False
                 continue

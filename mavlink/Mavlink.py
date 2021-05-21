@@ -26,10 +26,9 @@ class Mavlink:
         return self.drone_controller.connected and self.dronepoint_controller.connected
 
     # Main Test
-    def execute_test(self):
+    def execute_test(self, cell):
         self.executing = True
-
-        cell = [0, 3, 3]
+        
         self.execute_iteration(cell)
 
         self.executing = False
@@ -91,11 +90,11 @@ class Mavlink:
         # Return to IDLE
         self.state = config.IDLE
     
-    def test(self):
+    def test(self, cell):
         # Debug
         print('Start Executing Test')
         # Start async thread for test execution
-        thread_test = threading.Thread(target=self.execute_test)
+        thread_test = threading.Thread(target=self.execute_test, args=(cell,))
         thread_test.start()
     
     # Retrieve drone & dronepoint data
@@ -113,6 +112,29 @@ class Mavlink:
                 "dronepoint": self.dronepoint_controller.connected,
             },
         }
+    
+    def check_cell(self, cell):
+        x, y, z = cell
+        if y == 3:
+            if x < 0 or x > 4:
+                return False
+            if z < 0 or z > 6:
+                return False
+            if (
+                x == 1 and z == 1 or
+                x == 3 and z == 1 or
+                x == 1 and z == 2 or
+                x == 2 and z == 2 or
+                x == 3 and z == 2 or
+                x == 1 and z == 3 or
+                x == 2 and z == 3 or
+                x == 3 and z == 3 ):
+                return False
+        elif y == 2:
+            return False
+        else:
+            return False
+        return True
 
 if __name__ == '__main__':
     mavlink = Mavlink()

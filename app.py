@@ -40,11 +40,12 @@ def send_message(json):
 # Start text
 @socketio.on('test')
 def start_test(json):
-    # if json['password'] != password:
-    #     return emit('error', 'Invalid password')
+    if not mavlink.check_cell(json['cell']):
+        print("Can't start test")
+        emit('error', 'Invalid cell')
     if mavlink.connected:
         print(mavlink.connected)
-        mavlink.test()
+        mavlink.test(json['cell'])
     else:
         print("Can't start test")
 

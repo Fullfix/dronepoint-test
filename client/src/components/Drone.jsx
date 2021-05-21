@@ -1,6 +1,9 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core'
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
+import { toast } from 'react-toastify';
 import { DronepointContext } from '../contexts/DronepointProvider';
+import { getAllCells } from '../utils/cells';
+import Cells from './Cells';
 import DroneInfo from './DroneInfo';
 import DroneMap from './DroneMap';
 
@@ -17,7 +20,12 @@ const useStyles = makeStyles(theme => ({
     actionsBox: {
         marginTop: 20,
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    cellsSelect: {
+        marginBottom: 10,
+        width: 300,
     },
     stateBox: {
         marginTop: 20, 
@@ -37,6 +45,8 @@ const useStyles = makeStyles(theme => ({
 const Drone = () => {
     const classes = useStyles();
     const { data, startTest, isConnected, connection } = useContext(DronepointContext);
+    const allCells = getAllCells();
+    const [cell, setCell] = useState(0);
 
     if (!data) {
         return (
@@ -44,10 +54,22 @@ const Drone = () => {
         )
     }
 
+    const handleClick = () => {
+        if (connection.dronepoint) {
+            startTest(allCells[cell])
+        } else {
+            toast.error('Dronepoint not connected');
+        }
+    }
+
+    const handleCellChange = (e) => {
+        setCell(e.target.value);
+    }
+
     const [lat, lon] = data.pos;
     const [dpLat, dpLon] = data.dronepoint_pos;
 
-    if (!isConnected) return (
+    if (!connection.drone) return (
         <Box className={classes.root}>
             <Box className={classes.disconnectBox}>
                 <Typography variant="h2">Not connected</Typography>
@@ -68,8 +90,12 @@ const Drone = () => {
                 <DroneMap lat={lat} lon={lon} dpLat={dpLat} dpLon={dpLon} />
             </Box>
             <Box className={classes.actionsBox}>
+                <Typography variant="h2">Выберите ячейку</Typography>
+                <Cells allCells={allCells} value={cell} onChange={handleCellChange}
+                className={classes.cellsSelect} 
+                disabled={data.state !== 'idle'} />
                 <Button variant="contained" color="primary" size="large"
-                onClick={startTest} disabled={data.executing}>
+                onClick={handleClick} disabled={data.executing}>
                     <Typography variant="h3">Execute Test</Typography>
                 </Button>
             </Box>

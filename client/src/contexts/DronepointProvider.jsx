@@ -6,7 +6,7 @@ import { login, sendGetDataEvent, sendTestEvent, subscribeConnectEvent,
 export const DronepointContext = createContext({
     data: {},
     loading: true,
-    startTest: () => {},
+    startTest: (cell) => {},
     authenticate: async (password) => false,
     isAuthenticated: false,
     connection: { drone: false, dronepoint: false },      
@@ -78,7 +78,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         <DronepointContext.Provider value={{
             data: data,
             loading: loading,
-            startTest: () => sendTestEvent(getPassword()),
+            startTest: (cell) => sendTestEvent(cell),
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
             isConnected: droneConnected && dronepointConnected,
             authenticate: authenticate,

@@ -23,8 +23,8 @@ export const sendGetDataEvent = (password) => {
     socket.emit('getdata', { password });
 }
 
-export const sendTestEvent = (password) => {
-    socket.emit('test', { password });
+export const sendTestEvent = (cell) => {
+    socket.emit('test', { cell });
 }
 
 export const login = async (password) => {
