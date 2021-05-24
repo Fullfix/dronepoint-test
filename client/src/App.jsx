@@ -2,8 +2,7 @@ import { createMuiTheme, makeStyles, ThemeProvider, Typography } from '@material
 import React, { useContext } from 'react'
 import { ToastContainer } from 'react-toastify';
 import { YMaps } from 'react-yandex-maps';
-import Drone from './components/Drone';
-import LoginPage from './components/LoginPage';
+import MainPage from './components/MainPage';
 import DronepointProvider, { DronepointContext } from './contexts/DronepointProvider';
 
 const theme = createMuiTheme({
@@ -12,6 +11,9 @@ const theme = createMuiTheme({
         main: '#FF9900',
         contrastText: '#FFFFFF',
       },
+      secondary: {
+        main: '#1BE56E',
+      },
       text: {
         primary: '#000000',
         secondary: '#4a4f52',
@@ -19,7 +21,8 @@ const theme = createMuiTheme({
     },
     typography: {
       fontFamily: [
-        "'Inter'",
+        "'Roboto'",
+        "'Helvetica'",
       ].join(','),
       h2: {
         fontSize: 20,
@@ -47,13 +50,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Main = () => {
-  const { isAuthenticated, loading } = useContext(DronepointContext);
+  const { loading, data } = useContext(DronepointContext);
   
-  if (loading) return (
+  if (loading || !data) return (
     <Typography>Loading</Typography>
   )
 
-  return <Drone />
+  return <MainPage />
 }
 
 const App = () => {

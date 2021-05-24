@@ -1,24 +1,34 @@
-import { Box, makeStyles } from '@material-ui/core'
+import { Box, makeStyles, Typography } from '@material-ui/core'
 import { Map, Placemark } from 'react-yandex-maps';
-import React, { useCallback } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
+import { DronepointContext } from '../contexts/DronepointProvider';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        flex: '60%',
+        height: props => props.height,
     },
 }));
 
 const droneSize = 80;
 
-const DroneMap = ({ lat, lon, dpLat, dpLon }) => {
-    const classes = useStyles();
-    const pos = [lat, lon];
-    const dpPos = [dpLat, dpLon];
+const DroneMap = ({ height }) => {
+    const classes = useStyles({ height });
+    const { data, connection: { drone: isConnected } } = useContext(DronepointContext);
+
+    if (!isConnected) {
+        return (
+            <Box className={classes.root}>
+                <Typography align="center" variant="h2">
+                    No Drone Connected
+                </Typography>
+            </Box>
+        )
+    }
     
     return (
         <Box className={classes.root}>
-            <Map defaultState={{ center: pos, zoom: 15 }} width={'100%'} height={'100%'}>
-                <Placemark geometry={pos} options={{
+            <Map defaultState={{ center: data.pos, zoom: 15 }} width={'100%'} height={'100%'}>
+                <Placemark geometry={data.pos} options={{
                     iconLayout: 'default#image',
                     iconImageHref: '/drone.png',
                     iconImageSize: [droneSize, droneSize],
@@ -29,7 +39,7 @@ const DroneMap = ({ lat, lon, dpLat, dpLon }) => {
                         radius: 20
                     },
                 }}/>
-                <Placemark geometry={dpPos} />
+                <Placemark geometry={data.dronepoint_pos} />
             </Map>
         </Box>
     )
