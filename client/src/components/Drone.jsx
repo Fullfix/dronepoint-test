@@ -6,6 +6,7 @@ import { getAllCells } from '../utils/cells';
 import Cells from './Cells';
 import DroneInfo from './DroneInfo';
 import DroneMap from './DroneMap';
+import DronepointCam from './DronepointCam';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,7 +40,16 @@ const useStyles = makeStyles(theme => ({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    bottomBox: {
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    camBox: {
+        height: '350px',
+        backgroundColor: 'black',
+        width: '35%',
+    },
 }));
 
 const Drone = () => {
@@ -89,20 +99,28 @@ const Drone = () => {
                 <DroneInfo data={data}/>
                 <DroneMap lat={lat} lon={lon} dpLat={dpLat} dpLon={dpLon} />
             </Box>
-            <Box className={classes.actionsBox}>
-                <Typography variant="h2">Выберите ячейку</Typography>
-                <Cells allCells={allCells} value={cell} onChange={handleCellChange}
-                className={classes.cellsSelect} 
-                disabled={data.state !== 'idle'} />
-                <Button variant="contained" color="primary" size="large"
-                onClick={handleClick} disabled={data.executing}>
-                    <Typography variant="h3">Execute Test</Typography>
-                </Button>
-            </Box>
-            <Box className={classes.stateBox}>
-                <Typography variant="h2" align="center" className={classes.state}>
-                    {data.state}
-                </Typography>
+            <Box className={classes.bottomBox}>
+                <Box className={classes.camBox}>
+                    <DronepointCam />
+                </Box>
+                <Box className={classes.actionsBox}>
+                    <Typography variant="h2">Выберите ячейку</Typography>
+                    <Cells allCells={allCells} value={cell} onChange={handleCellChange}
+                    className={classes.cellsSelect} 
+                    disabled={data.state !== 'idle'} />
+                    <Button variant="contained" color="primary" size="large"
+                    onClick={handleClick} disabled={data.executing}>
+                        <Typography variant="h3">Execute Test</Typography>
+                    </Button>
+                    <Box className={classes.stateBox}>
+                        <Typography variant="h2" align="center" className={classes.state}>
+                            {data.state}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box className={classes.camBox}>
+                    <DronepointCam />
+                </Box>
             </Box>
         </Box>
     )
