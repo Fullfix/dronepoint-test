@@ -2,7 +2,7 @@ import { Box, Divider, makeStyles } from '@material-ui/core'
 import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify';
 import { DronepointContext } from '../contexts/DronepointProvider';
-import { DP_VIDEO_URL } from '../socket';
+import { DP_VIDEO_URL, DRONE_CAMERA_URL } from '../socket';
 import { getAllCells } from '../utils/cells';
 import ActionBox from './ActionBox';
 import DroneInfo from './DroneInfo';
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 const MainPage = () => {
     const classes = useStyles();
-    const { data, startTest, connection } = useContext(DronepointContext);
+    const { data, startTest, connection, video } = useContext(DronepointContext);
     const [cell, setCell] = useState(0);
     const allCells = getAllCells();
 
@@ -68,15 +68,16 @@ const MainPage = () => {
                 </Box>
                 <Box className={classes.right}>
                     <VideoBox
-                    active={connection.dronepoint}
-                    src={DP_VIDEO_URL}
+                    active={true}
+                    src={video.dronepoint}
                     height={400}
                     />
                     <Divider />
                     <VideoBox
-                    active={connection.dronepoint}
-                    src={DP_VIDEO_URL}
+                    active={true}
+                    src={DRONE_CAMERA_URL}
                     height={400}
+
                     />
                 </Box>
             </Box>

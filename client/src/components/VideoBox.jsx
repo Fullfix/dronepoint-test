@@ -1,6 +1,11 @@
 import { Box, makeStyles, Typography } from '@material-ui/core'
-import React from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import NotAvailable from './NotAvailable';
+import JSMpeg from '@cycjimmy/jsmpeg-player';
+import { DP_VIDEO_URL, sendGetVideoEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
+import { io } from 'socket.io-client';
+import { encode } from '../utils/display';
+import { DronepointContext } from '../contexts/DronepointProvider';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -13,8 +18,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const VideoBox = ({ src, active, height }) => {
+const VideoBox = ({ active, height, src }) => {
     const classes = useStyles({ height });
+    const imageRef = useRef();
 
     if (!active) return (
         <Box className={classes.root}>
@@ -24,7 +30,7 @@ const VideoBox = ({ src, active, height }) => {
     
     return (
         <Box className={classes.root}>
-            <img src={src} className={classes.image} />
+            <img className={classes.image} ref={imageRef} src={src} />
         </Box>
     )
 }

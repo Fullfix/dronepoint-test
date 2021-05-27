@@ -5,7 +5,7 @@ from flask_cors import CORS
 from dotenv import dotenv_values
 import time
 import logging
-from routes.videos import videos as videos_blueprint
+from routes.videos import dp_camera, drone_camera
 from mavlink.Mavlink import Mavlink
 
 # Init App
@@ -19,11 +19,11 @@ password = config['SECRET_CODE']
 mavlink = Mavlink()
 
 # Disable logging
-# log = logging.getLogger('werkzeug')
-# log.setLevel(logging.ERROR)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # Videos blueprint
-app.register_blueprint(videos_blueprint, url_prefix='/api/videos')
+# app.register_blueprint(videos_blueprint, url_prefix='/api/videos')
 
 # React app
 @app.route('/')
@@ -40,6 +40,14 @@ def login():
     #     return { "text": 'Authenticated' }
     # return { "text": "Wrong password" }, 400
     return { 'text': 'Done' }
+
+# Send video
+@socketio.on('getvideo')
+def send_video():
+    return emit('video', {
+        'dronepoint': dp_camera.lastframe,
+        'drone': drone_camera.lastframe,
+    })
 
 # Get mavlink data
 @socketio.on('getdata')
@@ -59,6 +67,9 @@ def start_test(json):
         mavlink.test(json['cell'])
     else:
         print("Can't start test")
+
+# Video
+
 
 if __name__ == "__main__":
     socketio.run(app)

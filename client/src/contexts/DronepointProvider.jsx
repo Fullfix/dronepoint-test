@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify';
-import { login, sendGetDataEvent, sendTestEvent, subscribeConnectEvent, 
-    subscribeDataEvent, subscribeErrorEvent } from '../socket';
+import { login, sendGetDataEvent, sendGetVideoEvent, sendTestEvent, subscribeConnectEvent, 
+    subscribeDataEvent, subscribeErrorEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
 
 export const DronepointContext = createContext({
     data: {},
@@ -9,7 +9,8 @@ export const DronepointContext = createContext({
     startTest: (cell) => {},
     authenticate: async (password) => false,
     isAuthenticated: false,
-    connection: { drone: false, dronepoint: false },      
+    connection: { drone: false, dronepoint: false },
+    video: { drone: null, dronepoint: null },      
     isConnected: false,
 })
 
@@ -19,6 +20,8 @@ const DronepointProvider = ({ children, timeout=500 }) => {
     const [dronepointConnected, setDronepointConnected] = useState(false);
     const [loading, setLoading] = useState(true);
     const [authenticated, setAuthenticated] = useState(false);
+    const [dpFrame, setDpFrame] = useState(null);
+    const [droneFrame, setDroneFrame] = useState(null);
     const interval = useRef();
 
     const getPassword = () => localStorage.getItem('password');
@@ -59,8 +62,33 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         subscribeConnectEvent(handleConnectEvent);
         subscribeErrorEvent(handleErrorEvent);
 
+        let check = true;
+        const handleVideoEvent = (data) => {
+            setDpFrame(URL.createObjectURL(
+                new Blob([data.dronepoint], { type: 'image/jpeg' })
+            ))
+            setDroneFrame(URL.createObjectURL(
+                new Blob([data.drone], { type: 'image/jpeg' })
+            ))
+            check = true
+        }
+
+        subscribeVideoEvent(handleVideoEvent);
+        
+        const interval = setInterval(() => {
+            if (check) {
+                sendGetVideoEvent();
+                check = false;
+            }
+        }, 20);
+
         if (login(getPassword())) {
             setAuthenticated(true);
+        }
+
+        return () => {
+            clearInterval(interval);
+            unsubscribeVideoEvent();
         }
     }, []);
 
@@ -83,6 +111,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
             isConnected: droneConnected && dronepointConnected,
             authenticate: authenticate,
             isAuthenticated: authenticated,
+            video: { drone: droneFrame, dronepoint: dpFrame },
         }}>
             {children}
         </DronepointContext.Provider>
