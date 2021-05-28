@@ -6,8 +6,8 @@ import threading
 
 class DPCamera:
     def __init__(self, url):
-        self.camera = cv2.VideoCapture(url)
         self.lastframe = None
+        self.camera = cv2.VideoCapture(url)
         gen_thread = threading.Thread(target=self.generate_frames)
         gen_thread.start()
     
@@ -23,8 +23,8 @@ class DPCamera:
                 self.lastframe = frame
 
 # Init camera
-dp_camera = DPCamera('rtsp://192.168.194.48:8554/video')
-drone_camera = DPCamera('tcp://192.168.194.120:8080/video')
+dp_camera = DPCamera('rtsp://192.168.194.141:8554/video')
+drone_camera = DPCamera('')
 
 # # Dronepoint camera
 # @videos.route('/dronepoint')

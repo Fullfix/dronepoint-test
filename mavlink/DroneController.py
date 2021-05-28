@@ -32,6 +32,9 @@ class DroneController:
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
         print('Drone initialized. Waiting for connection')
+        # Start sending heartbeat
+        thread_send = threading.Thread(target=self.send_heartbeats)
+        thread_send.start()
         # Start listening mavlink messages
         thread_listen = threading.Thread(target=self.listen_messages)
         thread_listen.start()
@@ -71,6 +74,18 @@ class DroneController:
             if msg_dict['msgid'] in self.handlers.keys():
                 # Execute handlers
                 self.handlers[msg_dict['msgid']](msg_dict)
+    
+    # Send random heartbeats to receive messages from Drone
+    def send_heartbeats(self):
+        while True:
+            self.mavconn.mav.heartbeat_send(
+                0,
+                0,
+                0,
+                0,
+                0,
+            )
+            time.sleep(1)
     
     # Global position int listener: update drone's position
     def GLOBAL_POSITION_INT_HANDLER(self, msg_dict):

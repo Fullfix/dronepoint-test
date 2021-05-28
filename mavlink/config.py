@@ -10,14 +10,14 @@ class DronepointConfig:
     CUSTOM_MODE_GOTO_CELL = 5
 
     # Connection
-    DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
-    DRONEPOINT_CONNECTION = 'udpout:192.168.194.48:14590'
+    DRONE_CONNECTION = 'udpout:192.168.194.120:14550'
+    DRONEPOINT_CONNECTION = 'udpout:192.168.194.141:14590'
     DRONE_CONNECTION_TIMEOUT = 3
     DRONEPOINT_CONNECTION_TIMEOUT = 3
 
     # Flight
-    FLIGHT_DISTANCE = 0.0009 # 100 meters
-    FLIGHT_ALT = 50
+    FLIGHT_DISTANCE = 0.00009 # 10 meters
+    FLIGHT_ALT = 10
 
     # State
     IDLE = 'idle'
