@@ -18,7 +18,7 @@ class DronepointConfig:
 
     # Flight
     FLIGHT_DISTANCE = 0.00009 # 10 meters
-    FLIGHT_ALT = 10
+    FLIGHT_ALT = 20
 
     # State
     IDLE = 'idle'

@@ -223,8 +223,9 @@ class DroneController:
         )
         wp.add(p)
 
-        # Send waypoints
         self.listening = False
+
+        # Send waypoints
         self.mavconn.waypoint_clear_all_send()
         self.mavconn.waypoint_count_send(wp.count())
 
