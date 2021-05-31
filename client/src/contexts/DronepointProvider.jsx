@@ -6,7 +6,7 @@ import { login, sendGetDataEvent, sendGetVideoEvent, sendTestEvent, subscribeCon
 export const DronepointContext = createContext({
     data: {},
     loading: true,
-    startTest: (cell) => {},
+    startTest: (cell, password) => {},
     authenticate: async (password) => false,
     isAuthenticated: false,
     connection: { drone: false, dronepoint: false },
@@ -19,13 +19,8 @@ const DronepointProvider = ({ children, timeout=500 }) => {
     const [droneConnected, setDroneConnected] = useState(false);
     const [dronepointConnected, setDronepointConnected] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [authenticated, setAuthenticated] = useState(false);
     const [dpFrame, setDpFrame] = useState(null);
     const [droneFrame, setDroneFrame] = useState(null);
-    const interval = useRef();
-
-    const getPassword = () => localStorage.getItem('password');
-    const setPassword = (code) => localStorage.setItem('password', code);
 
     const handleConnectEvent = () => {
         console.log('Connected');
@@ -42,19 +37,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
 
     const handleErrorEvent = (err) => {
         console.log(err);
-        setAuthenticated(false);
-    }
-
-    const authenticate = async (code) => {
-        const success = await login(code);
-        if (success) {
-            toast.success('Logged In');
-            setPassword(code);
-            setAuthenticated(true);
-        } else {
-            toast.error('Wrong Password');
-        }
-        return success;
+        toast.error(err);
     }
     
     useEffect(() => {
@@ -82,35 +65,24 @@ const DronepointProvider = ({ children, timeout=500 }) => {
             }
         }, 20);
 
-        if (login(getPassword())) {
-            setAuthenticated(true);
-        }
+        const dataInterval = setInterval(() => {
+            sendGetDataEvent();
+        }, timeout);
 
         return () => {
             clearInterval(interval);
+            clearInterval(dataInterval);
             unsubscribeVideoEvent();
         }
     }, []);
-
-    useEffect(() => {
-        if (authenticated) {
-            interval.current = setInterval(() => {
-                sendGetDataEvent(getPassword());
-            }, timeout); 
-        } else {
-            clearInterval(interval.current);
-        }
-    }, [authenticated])
 
     return (
         <DronepointContext.Provider value={{
             data: data,
             loading: loading,
-            startTest: (cell) => sendTestEvent(cell),
+            startTest: (cell, password) => sendTestEvent(cell, password),
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
             isConnected: droneConnected && dronepointConnected,
-            authenticate: authenticate,
-            isAuthenticated: authenticated,
             video: { drone: droneFrame, dronepoint: dpFrame },
         }}>
             {children}

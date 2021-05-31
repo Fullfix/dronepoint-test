@@ -1,5 +1,5 @@
 import { Box, makeStyles, Typography } from '@material-ui/core'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import NotAvailable from './NotAvailable';
 import JSMpeg from '@cycjimmy/jsmpeg-player';
 import { DP_VIDEO_URL, sendGetVideoEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
@@ -21,8 +21,11 @@ const useStyles = makeStyles(theme => ({
 const VideoBox = ({ active, height, src }) => {
     const classes = useStyles({ height });
     const imageRef = useRef();
+    const [isValidSrc, setIsValidSrc] = useState(true);
 
-    if (!active) return (
+    const handleError = () => setIsValidSrc(false);
+
+    if (!isValidSrc) return (
         <Box className={classes.root}>
             <NotAvailable />
         </Box>
@@ -30,7 +33,7 @@ const VideoBox = ({ active, height, src }) => {
     
     return (
         <Box className={classes.root}>
-            <img className={classes.image} ref={imageRef} src={src} />
+            <img className={classes.image} ref={imageRef} src={src} onError={handleError}/>
         </Box>
     )
 }

@@ -36,9 +36,9 @@ const MainPage = () => {
     const [cell, setCell] = useState(0);
     const allCells = getAllCells();
 
-    const handleTestStart = () => {
+    const handleTestStart = (password) => {
         if (connection.dronepoint) {
-            startTest(allCells[cell])
+            startTest(allCells[cell], password)
         } else {
             toast.error('Dronepoint not connected');
         }

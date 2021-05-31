@@ -7,13 +7,12 @@ import time
 import logging
 from routes.videos import dp_camera, drone_camera
 from mavlink.Mavlink import Mavlink
+from config import password
 
 # Init App
 app = Flask(__name__, static_folder='./client/build', static_url_path='/')
 CORS(app, resources={ 'r"*"': { "origins": '*' } })
 socketio = SocketIO(app, cors_allowed_origins="*")
-config = dotenv_values('.env')
-password = config['SECRET_CODE']
 
 # Init mavlink
 mavlink = Mavlink()
@@ -59,16 +58,17 @@ def send_message(json):
 # Start text
 @socketio.on('test')
 def start_test(json):
+    if json['password'] != password:
+        return emit('error', 'Invalid Password')
     if not mavlink.check_cell(json['cell']):
         print("Can't start test")
-        emit('error', 'Invalid cell')
+        return emit('error', 'Invalid cell')
     if mavlink.connected:
         print(mavlink.connected)
         mavlink.test(json['cell'])
     else:
+        emit('error', "Can't start dronepoint test")
         print("Can't start test")
-
-# Video
 
 
 if __name__ == "__main__":

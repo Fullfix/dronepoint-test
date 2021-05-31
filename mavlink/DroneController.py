@@ -28,6 +28,7 @@ class DroneController:
             mavlink.MAVLINK_MSG_ID_GLOBAL_POSITION_INT: self.GLOBAL_POSITION_INT_HANDLER,
             mavlink.MAVLINK_MSG_ID_EXTENDED_SYS_STATE: self.EXTENDED_SYS_STATE_HANDLER,
             mavlink.MAVLINK_MSG_ID_HEARTBEAT: self.HEARTBEAT_HANDLER,
+            mavlink.MAVLINK_MSG_ID_GPS_RAW_INT: self.GLOBAL_POSITION_INT_HANDLER,
         }
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
@@ -208,8 +209,8 @@ class DroneController:
             2, # Precision land mode 
             0, 
             math.nan, # Angle
-            config.DRONEPOINT_LAT, # Lat 
-            config.DRONEPOINT_LON, # Lon
+            self.pos[0], # Lat 
+            self.pos[1], # Lon
             0, # Alt
         )
         wp.add(p)

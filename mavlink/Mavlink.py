@@ -41,48 +41,48 @@ class Mavlink:
         # Time Counter
         start_time = time.time()
 
-        # Get from user
-        self.state = config.GETTING_FROM_USER
-        self.dronepoint_controller.execute_command(
-            config.STATE_GETTING_FROM_USER,
-            cell[0], cell[1], cell[2],
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
+        # # Get from user
+        # self.state = config.GETTING_FROM_USER
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_GETTING_FROM_USER,
+        #     cell[0], cell[1], cell[2],
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
 
-        # Load Drone
-        self.state = config.LOADING_DRONE
-        self.dronepoint_controller.execute_command(
-            config.STATE_LOADING_DRONE,
-            cell[0], cell[1], cell[2], 3
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
+        # # Load Drone
+        # self.state = config.LOADING_DRONE
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_LOADING_DRONE,
+        #     cell[0], cell[1], cell[2], 3
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
 
-        # Execute drone flight again
+        # Execute drone flight
         self.state = config.FLYING
         self.drone_controller.execute_flight()
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # Unload Drone
-        self.state = config.UNLOADING_DRONE
-        self.dronepoint_controller.execute_command(
-            config.STATE_UNLOADING_DRONE,
-            cell[0], cell[1], cell[2], 3
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
+        # # Unload Drone
+        # self.state = config.UNLOADING_DRONE
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_UNLOADING_DRONE,
+        #     cell[0], cell[1], cell[2], 3
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
 
-        # Unload to user
-        self.state = config.UNLOADING_TO_USER
-        self.dronepoint_controller.execute_command(
-            config.STATE_UNLOADING_TO_USER,
-            cell[0], cell[1], cell[2],
-        )
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
+        # # Unload to user
+        # self.state = config.UNLOADING_TO_USER
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_UNLOADING_TO_USER,
+        #     cell[0], cell[1], cell[2],
+        # )
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
 
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')

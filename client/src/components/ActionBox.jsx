@@ -1,8 +1,9 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { DronepointContext } from '../contexts/DronepointProvider';
 import { getAllCells } from '../utils/cells';
 import Cells from './Cells';
+import LoginDialog from './LoginDialog';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -26,14 +27,31 @@ const useStyles = makeStyles(theme => ({
 const ActionBox = ({ cell, allCells, onCellChange, onTest }) => {
     const classes = useStyles();
     const { data, isConnected } = useContext(DronepointContext); 
+    const [open, setOpen] = useState(false);
+
+    const handleSubmit = (password) => {
+        onTest(password);
+    }
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const buttonDisabled = data.executing || !isConnected
+
+
     return (
         <Box className={classes.root}>
+            <LoginDialog 
+            open={open && !buttonDisabled}
+            onClose={handleClose} onSubmit={handleSubmit} />
             <Typography variant="h2">Choose a cell</Typography>
             <Cells allCells={allCells} value={cell} onChange={onCellChange}
             className={classes.cellsSelect} 
-            disabled={data.state !== 'idle' || !isConnected} />
+            disabled={buttonDisabled} />
             <Button variant="contained" color="primary" size="large"
-            onClick={onTest} disabled={data.executing || !isConnected}>
+            onClick={handleOpen} 
+            disabled={buttonDisabled}
+            >
                 <Typography variant="h3">Execute Test</Typography>
             </Button>
             <Box className={classes.stateBox}>

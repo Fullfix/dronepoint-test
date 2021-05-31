@@ -3,13 +3,16 @@ from flask import Response
 import time
 import cv2
 import threading
+from config import stream_video
 
 class DPCamera:
     def __init__(self, url):
         self.lastframe = None
-        self.camera = cv2.VideoCapture(url)
-        gen_thread = threading.Thread(target=self.generate_frames)
-        gen_thread.start()
+        if stream_video:
+            self.camera = cv2.VideoCapture(url)
+            gen_thread = threading.Thread(target=self.generate_frames)
+            gen_thread.start()
+            print('started DP Camera stream')
     
     def generate_frames(self):
         while True:
