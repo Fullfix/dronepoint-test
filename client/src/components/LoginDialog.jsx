@@ -33,6 +33,7 @@ const LoginDialog = ({ onClose, open, onSubmit }) => {
                 <TextField 
                 fullWidth
                 value={password} 
+                type="password"
                 label="Password"
                 onChange={(e) => setPassword(e.target.value)} />
             </DialogContent>

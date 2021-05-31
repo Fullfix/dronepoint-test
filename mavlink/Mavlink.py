@@ -58,8 +58,8 @@ class Mavlink:
         # Execute drone flight
         self.drone_controller.execute_flight()
 
-        # Delay
-        time.sleep(config.DRONEPOINT_DELAY)
+        # # Delay
+        # time.sleep(config.DRONEPOINT_DELAY)
 
         # # Unload Drone
         # self.dronepoint_controller.execute_command(
@@ -74,8 +74,8 @@ class Mavlink:
         #     config.STATE_UNLOADING_TO_USER,
         #     cell[0], cell[1], cell[2],
         # )
-        # # Delay
-        # time.sleep(config.DRONEPOINT_DELAY)
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
 
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')

@@ -18,6 +18,8 @@ class DroneController:
         url = config.DRONE_CONNECTION
         # Is connected
         self.connected = False
+        # Listen messages
+        self.listening = True
         # Drone parameters
         self.pos = [0, 0]
         self.alt = 0
@@ -46,6 +48,10 @@ class DroneController:
     def listen_messages(self):
         print('Started watching messages')
         while True:
+            if not self.listening:
+                print('no listen')
+                time.sleep(1)
+                continue
             msg = self.mavconn.recv_match(blocking=True, timeout=config.DRONE_CONNECTION_TIMEOUT)
             # Check if msg is None
             if not msg:
@@ -75,6 +81,8 @@ class DroneController:
             if msg_dict['msgid'] in self.handlers.keys():
                 # Execute handlers
                 self.handlers[msg_dict['msgid']](msg_dict)
+            if msg_dict['msgid'] == 40:
+                print('TRAITOR')
     
     # Send random heartbeats to receive messages from Drone
     def send_heartbeats(self):
@@ -97,10 +105,10 @@ class DroneController:
         pos_difference = [abs(pos[i] - self.pos[i]) * 10000000 for i in range(len(pos))]
         alt = msg_dict['alt'] / 1000
         alt_difference = abs(self.alt - alt)
-        if pos_difference[0] > 5 or pos_difference[1] > 5 or alt_difference >= 1:
-            self.pos = pos[:]
-            self.alt = alt
-            # print(f'Update pos to {self.pos[0]} {self.pos[1]} {self.alt}')
+        # if pos_difference[0] > 5 or pos_difference[1] > 5 or alt_difference >= 1:
+        self.pos = pos[:]
+        self.alt = alt
+        # print(f'Update pos to {self.pos[0]} {self.pos[1]} {self.alt}')
     
     # Heartbeat listener: update drone's state (armed)
     def HEARTBEAT_HANDLER(self, msg_dict):
@@ -206,7 +214,7 @@ class DroneController:
             0,
             1,
             0, 
-            2, # Precision land mode 
+            0, # Precision land mode 
             0, 
             math.nan, # Angle
             self.pos[0], # Lat 
@@ -216,6 +224,7 @@ class DroneController:
         wp.add(p)
 
         # Send waypoints
+        self.listening = False
         self.mavconn.waypoint_clear_all_send()
         self.mavconn.waypoint_count_send(wp.count())
 
@@ -226,6 +235,7 @@ class DroneController:
             print(f'Sending waypoint {msg.seq}')
 
         # Start Mission
+        self.listening = True
         time.sleep(1)
         self.mavconn.set_mode_auto()
         print('Started Mission')
