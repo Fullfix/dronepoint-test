@@ -49,7 +49,7 @@ const ActionBox = ({ cell, allCells, onCellChange, onTest }) => {
             className={classes.cellsSelect} 
             disabled={buttonDisabled} />
             <Button variant="contained" color="primary" size="large"
-            onClick={handleOpen} 
+            onClick={handleOpen}
             disabled={buttonDisabled}
             >
                 <Typography variant="h3">Execute Test</Typography>

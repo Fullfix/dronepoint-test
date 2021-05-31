@@ -12,8 +12,6 @@ from .config import DronepointConfig as config
 
 class Mavlink:
     def __init__(self):
-        # Current state of execution
-        self.state = config.IDLE
         # Mission Execution param (bool)
         self.executing = False
         # Drone Controller
@@ -42,7 +40,6 @@ class Mavlink:
         start_time = time.time()
 
         # # Get from user
-        # self.state = config.GETTING_FROM_USER
         # self.dronepoint_controller.execute_command(
         #     config.STATE_GETTING_FROM_USER,
         #     cell[0], cell[1], cell[2],
@@ -51,7 +48,6 @@ class Mavlink:
         # time.sleep(config.DRONEPOINT_DELAY)
 
         # # Load Drone
-        # self.state = config.LOADING_DRONE
         # self.dronepoint_controller.execute_command(
         #     config.STATE_LOADING_DRONE,
         #     cell[0], cell[1], cell[2], 3
@@ -60,14 +56,12 @@ class Mavlink:
         # time.sleep(config.DRONEPOINT_DELAY)
 
         # Execute drone flight
-        self.state = config.FLYING
         self.drone_controller.execute_flight()
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
         # # Unload Drone
-        # self.state = config.UNLOADING_DRONE
         # self.dronepoint_controller.execute_command(
         #     config.STATE_UNLOADING_DRONE,
         #     cell[0], cell[1], cell[2], 3
@@ -76,7 +70,6 @@ class Mavlink:
         # time.sleep(config.DRONEPOINT_DELAY)
 
         # # Unload to user
-        # self.state = config.UNLOADING_TO_USER
         # self.dronepoint_controller.execute_command(
         #     config.STATE_UNLOADING_TO_USER,
         #     cell[0], cell[1], cell[2],
@@ -86,9 +79,6 @@ class Mavlink:
 
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')
-        
-        # Return to IDLE
-        self.state = config.IDLE
     
     def test(self, cell):
         # Debug
@@ -105,13 +95,32 @@ class Mavlink:
             "armed": self.drone_controller.armed,
             "landing_state": self.drone_controller.landed_state,
             "executing": self.executing,
-            "state": self.state,
+            "state": self.get_state(),
             "dronepoint_pos": [config.DRONEPOINT_LAT, config.DRONEPOINT_LON],
             "connection": {
                 "drone": self.drone_controller.connected,
                 "dronepoint": self.dronepoint_controller.connected,
             },
         }
+    
+    # Dynamically get state of test
+    def get_state(self):
+        # Check flight
+        if self.drone_controller.connected and self.drone_controller.armed:
+            return config.FLYING
+        # Check dronepoint states
+        state_to_test = {
+            config.STATE_GETTING_FROM_USER: config.GETTING_FROM_USER,
+            config.STATE_LOADING_DRONE: config.LOADING_DRONE,
+            config.STATE_UNLOADING_DRONE: config.UNLOADING_DRONE,
+            config.STATE_UNLOADING_TO_USER: config.UNLOADING_TO_USER,
+            config.STATE_STANDBY: config.IDLE,
+        }
+        if not self.dronepoint_controller.connected:
+            return config.IDLE
+        if self.dronepoint_controller.custom_mode in state_to_test.keys():
+            return state_to_test[self.dronepoint_controller.custom_mode]
+        return config.IDLE
     
     def check_cell(self, cell):
         x, y, z = cell
