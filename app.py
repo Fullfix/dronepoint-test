@@ -63,12 +63,13 @@ def start_test(json):
     if not mavlink.check_cell(json['cell']):
         print("Can't start test")
         return emit('error', 'Invalid cell')
-    if mavlink.connected:
-        print(mavlink.connected)
-        mavlink.test(json['cell'])
-    else:
-        emit('error', "Can't start dronepoint test")
-        print("Can't start test")
+    mavlink.test(json['cell'])
+    # if mavlink.connected:
+    #     print(mavlink.connected)
+    #     mavlink.test(json['cell'])
+    # else:
+    #     emit('error', "Can't start dronepoint test")
+    #     print("Can't start test")
 
 
 if __name__ == "__main__":

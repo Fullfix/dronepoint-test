@@ -1,9 +1,8 @@
 import io from 'socket.io-client';
 import axios from 'axios'
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const DRONE_CAMERA_URL = 'http://192.168.194.120:8080/stream?topic=/main_camera/image_raw';
+export const DRONE_CAMERA_URL = 'http://192.168.194.132:8080/stream?topic=/main_camera/image_raw';
 
 const socket = io(`/`);
 

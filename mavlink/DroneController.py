@@ -49,7 +49,6 @@ class DroneController:
         print('Started watching messages')
         while True:
             if not self.listening:
-                print('no listen')
                 time.sleep(1)
                 continue
             msg = self.mavconn.recv_match(blocking=True, timeout=config.DRONE_CONNECTION_TIMEOUT)
@@ -81,8 +80,12 @@ class DroneController:
             if msg_dict['msgid'] in self.handlers.keys():
                 # Execute handlers
                 self.handlers[msg_dict['msgid']](msg_dict)
-            if msg_dict['msgid'] == 40:
-                print('TRAITOR')
+            # if msg_dict['msgid'] in range(37, 48):
+            #     print('TRAITOR')
+            #     print(msg_dict['msgid'])
+            # if msg_dict['msgid'] == 47:
+            #     print(f'mission ack {msg_dict["type"]}')
+            #     print(msg.get_type())
     
     # Send random heartbeats to receive messages from Drone
     def send_heartbeats(self):
@@ -94,7 +97,7 @@ class DroneController:
                 0,
                 0,
             )
-            time.sleep(1)
+            time.sleep(0.5)
     
     # Global position int listener: update drone's position
     def GLOBAL_POSITION_INT_HANDLER(self, msg_dict):
@@ -190,6 +193,51 @@ class DroneController:
         wp.add(p)
         # Flight
         point = [self.pos[0] + config.FLIGHT_DISTANCE, self.pos[1]]
+        p = mavlink.MAVLink_mission_item_message(
+            self.mavconn.target_system,
+            self.mavconn.target_component,
+            1,
+            frame,
+            mavlink.MAV_CMD_NAV_WAYPOINT,
+            0,
+            1,
+            0, 10, 0, math.nan,
+            point[0],
+            point[1],
+            config.FLIGHT_ALT,
+        )
+        wp.add(p)
+        point = [self.pos[0] + config.FLIGHT_DISTANCE, self.pos[1] + config.FLIGHT_DISTANCE]
+        p = mavlink.MAVLink_mission_item_message(
+            self.mavconn.target_system,
+            self.mavconn.target_component,
+            1,
+            frame,
+            mavlink.MAV_CMD_NAV_WAYPOINT,
+            0,
+            1,
+            0, 10, 0, math.nan,
+            point[0],
+            point[1],
+            config.FLIGHT_ALT,
+        )
+        wp.add(p)
+        point = [self.pos[0], self.pos[1] + config.FLIGHT_DISTANCE]
+        p = mavlink.MAVLink_mission_item_message(
+            self.mavconn.target_system,
+            self.mavconn.target_component,
+            1,
+            frame,
+            mavlink.MAV_CMD_NAV_WAYPOINT,
+            0,
+            1,
+            0, 10, 0, math.nan,
+            point[0],
+            point[1],
+            config.FLIGHT_ALT,
+        )
+        wp.add(p)
+        point = [self.pos[0], self.pos[1]]
         p = mavlink.MAVLink_mission_item_message(
             self.mavconn.target_system,
             self.mavconn.target_component,

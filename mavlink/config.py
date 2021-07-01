@@ -7,24 +7,28 @@ class DronepointConfig:
     CUSTOM_MODE_CHANGING_BATTERY = 9
     CUSTOM_MODE_OPEN_BOTTOM_HATCH = 21
     CUSTOM_MODE_OPEN_TOP_HATCH = 3
+    CUSTOM_MODE_CLOSING = 4
+    CUSTOM_MODE_OPENING = 2
     CUSTOM_MODE_GOTO_CELL = 5
 
     # Connection
-    # DRONE_CONNECTION = 'udpout:192.168.194.120:14550'
-    DRONE_CONNECTION = 'udpin:0.0.0.0:14550'
+    DRONE_CONNECTION = 'udpout:192.168.194.132:14550'
+    # DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
     DRONEPOINT_CONNECTION = 'udpout:192.168.194.141:14590'
     DRONE_CONNECTION_TIMEOUT = 3
     DRONEPOINT_CONNECTION_TIMEOUT = 3
 
     # Flight
-    FLIGHT_DISTANCE = 0.00009 # 10 meters
+    FLIGHT_DISTANCE = 0.00018 # 20 meters
     FLIGHT_ALT = 20
 
     # State
     IDLE = 'idle'
     GETTING_FROM_USER = 'getting_from_user'
     LOADING_DRONE = 'loading_drone'
+    OPENING = 'opening'
     FLYING = 'flying'
+    CLOSING = 'closing'
     UNLOADING_DRONE = 'unloading_drone'
     GIVING_BATTERY = 'giving_battery'
     UNLOADING_TO_USER = 'unloading_to_user'

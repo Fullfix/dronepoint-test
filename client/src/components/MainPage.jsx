@@ -37,10 +37,10 @@ const MainPage = () => {
     const allCells = getAllCells();
 
     const handleTestStart = (password) => {
-        if (connection.dronepoint) {
+        if (connection.drone) {
             startTest(allCells[cell], password)
         } else {
-            toast.error('Dronepoint not connected');
+            toast.error('Drone not connected');
         }
     }
 
@@ -75,6 +75,7 @@ const MainPage = () => {
                     <Divider />
                     <VideoBox
                     active={true}
+                    ws={true}
                     src={DRONE_CAMERA_URL}
                     height={400}
 

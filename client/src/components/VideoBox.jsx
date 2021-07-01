@@ -3,9 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import NotAvailable from './NotAvailable';
 import JSMpeg from '@cycjimmy/jsmpeg-player';
 import { DP_VIDEO_URL, sendGetVideoEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
-import { io } from 'socket.io-client';
-import { encode } from '../utils/display';
-import { DronepointContext } from '../contexts/DronepointProvider';
+import io from 'socket.io-client';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -18,10 +16,27 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const VideoBox = ({ active, height, src }) => {
+const VideoBox = ({ active, height, src, ws }) => {
     const classes = useStyles({ height });
     const imageRef = useRef();
     const [isValidSrc, setIsValidSrc] = useState(true);
+
+    useEffect(() => {
+        if (ws) {
+            // const player = new JSMpeg.Player('ws://localhost:5001', {
+            //     canvas: imageRef.current,
+            // })
+            // player.autoplay = true;
+            // player.loop = true;
+            const socket = io('http://localhost:5001');
+            socket.on('data', data => {
+                imageRef.current.src = 'data:image/jpeg;base64,' + data;
+            })
+            socket.on('connect', e => {
+                console.log('Connect');
+            })
+        }
+    }, []);
 
     const handleError = () => setIsValidSrc(false);
 
@@ -33,7 +48,9 @@ const VideoBox = ({ active, height, src }) => {
     
     return (
         <Box className={classes.root}>
-            <img className={classes.image} ref={imageRef} src={src} onError={handleError}/>
+            {!ws && <img className={classes.image} ref={imageRef} src={src} onError={handleError}/>}
+            {/* {ws && <canvas className={classes.image} ref={imageRef} onError={handleError}/>} */}
+            {ws && <img className={classes.image} ref={imageRef} src={src} />}
         </Box>
     )
 }

@@ -39,41 +39,30 @@ class Mavlink:
         # Time Counter
         start_time = time.time()
 
-        # # Get from user
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_GETTING_FROM_USER,
-        #     cell[0], cell[1], cell[2],
-        # )
-        # # Delay
-        # time.sleep(config.DRONEPOINT_DELAY)
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
 
-        # # Load Drone
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_LOADING_DRONE,
-        #     cell[0], cell[1], cell[2], 3
-        # )
-        # # Delay
-        # time.sleep(config.DRONEPOINT_DELAY)
+        # (Open): Get from user + Load Drone
+        self.dronepoint_controller.execute_command(
+            config.STATE_OPENING,
+            0, 0, 0, 3
+        )
+
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
 
         # Execute drone flight
         self.drone_controller.execute_flight()
 
-        # # Delay
-        # time.sleep(config.DRONEPOINT_DELAY)
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
 
-        # # Unload Drone
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_UNLOADING_DRONE,
-        #     cell[0], cell[1], cell[2], 3
-        # )
-        # # Delay
-        # time.sleep(config.DRONEPOINT_DELAY)
+        # (Close): Unload Drone + Unload to user
+        self.dronepoint_controller.execute_command(
+            config.STATE_CLOSING,
+            0, 0, 0, 3
+        )
 
-        # # Unload to user
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_UNLOADING_TO_USER,
-        #     cell[0], cell[1], cell[2],
-        # )
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
@@ -115,6 +104,8 @@ class Mavlink:
             config.STATE_UNLOADING_DRONE: config.UNLOADING_DRONE,
             config.STATE_UNLOADING_TO_USER: config.UNLOADING_TO_USER,
             config.STATE_STANDBY: config.IDLE,
+            config.STATE_CLOSING: config.CLOSING,
+            config.STATE_OPENING: config.OPENING,
         }
         if not self.dronepoint_controller.connected:
             return config.IDLE
