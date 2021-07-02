@@ -42,11 +42,27 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # (Open): Get from user + Load Drone
+        # Get from user
         self.dronepoint_controller.execute_command(
-            config.STATE_OPENING,
-            0, 0, 0, 3
+            config.STATE_GETTING_FROM_USER,
+            cell[0], cell[1], cell[2],
         )
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+
+        # Load Drone
+        self.dronepoint_controller.execute_command(
+            config.STATE_LOADING_DRONE,
+            cell[0], cell[1], cell[2], 3
+        )
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+
+        # # (Open): Get from user + Load Drone
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_OPENING,
+        #     0, 0, 0, 3
+        # )
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
@@ -57,10 +73,24 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # (Close): Unload Drone + Unload to user
+        # # (Close): Unload Drone + Unload to user
+        # self.dronepoint_controller.execute_command(
+        #     config.STATE_CLOSING,
+        #     0, 0, 0, 3
+        # )
+
         self.dronepoint_controller.execute_command(
-            config.STATE_CLOSING,
-            0, 0, 0, 3
+            config.STATE_UNLOADING_DRONE,
+            cell[0], cell[1], cell[2], 3
+        )
+
+        # Delay
+        time.sleep(config.DRONEPOINT_DELAY)
+
+        # Unload Drone
+        self.dronepoint_controller.execute_command(
+            config.STATE_UNLOADING_TO_USER,
+            cell[0], cell[1], cell[2],
         )
 
         # Delay
