@@ -137,6 +137,7 @@ class DronepointController:
             time.sleep(1)
         # Debug
         print(f'Command {mode} finished in time {time.time() - start_time} s')
+        return time.time() - start_time
     
     # Heartbeat listener (0): update dronepoint's custom mode
     def HEARTBEAT_HANDLER(self, msg):

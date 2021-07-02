@@ -25,6 +25,7 @@ class Mavlink:
 
     # Main Test
     def execute_test(self, cell):
+        print('test no flight')
         self.executing = True
         
         self.execute_iteration(cell)
@@ -43,7 +44,7 @@ class Mavlink:
         time.sleep(config.DRONEPOINT_DELAY)
 
         # Get from user
-        self.dronepoint_controller.execute_command(
+        time_get_from_user = self.dronepoint_controller.execute_command(
             config.STATE_GETTING_FROM_USER,
             cell[0], cell[1], cell[2],
         )
@@ -51,7 +52,7 @@ class Mavlink:
         time.sleep(config.DRONEPOINT_DELAY)
 
         # Load Drone
-        self.dronepoint_controller.execute_command(
+        time_load_drone = self.dronepoint_controller.execute_command(
             config.STATE_LOADING_DRONE,
             cell[0], cell[1], cell[2], 3
         )
@@ -67,8 +68,9 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # Execute drone flight
-        self.drone_controller.execute_flight()
+        # # Execute drone flight
+        # self.drone_controller.execute_flight()
+        time_flight = 0.0
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
@@ -79,7 +81,7 @@ class Mavlink:
         #     0, 0, 0, 3
         # )
 
-        self.dronepoint_controller.execute_command(
+        time_unload_drone = self.dronepoint_controller.execute_command(
             config.STATE_UNLOADING_DRONE,
             cell[0], cell[1], cell[2], 3
         )
@@ -88,7 +90,7 @@ class Mavlink:
         time.sleep(config.DRONEPOINT_DELAY)
 
         # Unload Drone
-        self.dronepoint_controller.execute_command(
+        time_unload_to_user = self.dronepoint_controller.execute_command(
             config.STATE_UNLOADING_TO_USER,
             cell[0], cell[1], cell[2],
         )
@@ -96,8 +98,20 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
+        time_total = time_get_from_user + time_load_drone + time_flight 
+        + time_unload_drone + time_unload_to_user
+
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')
+
+        # Final Message
+        print(f'Get From User: {round(time_get_from_user, 2)} s')
+        print(f'Load Drone: {round(time_load_drone, 2)} s')
+        print(f'Flight: {round(time_flight, 2)} s')
+        print(f'Unload Drone: {round(time_unload_drone, 2)} s')
+        print(f'Unload To User: {round(time_unload_to_user, 2)} s')
+        print(f'Total (no delay): {round(time_total, 2)} s')
+        print(f'Total: {round(time.time() - start_time, 2)} s')
     
     def test(self, cell):
         # Debug

@@ -55,4 +55,4 @@ class DronepointConfig:
     # DP Pos
     DRONEPOINT_LAT = 55.7040408
     DRONEPOINT_LON = 37.7244345
-    DRONEPOINT_ALT = 150 
+    DRONEPOINT_ALT = 150

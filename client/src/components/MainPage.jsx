@@ -71,12 +71,14 @@ const MainPage = () => {
                     active={true}
                     src={video.dronepoint}
                     height={400}
+                    type="dronepoint"
                     />
                     <Divider />
                     <VideoBox
                     active={true}
                     ws={true}
-                    src={DRONE_CAMERA_URL}
+                    type="drone"
+                    src={'/'}
                     height={400}
 
                     />

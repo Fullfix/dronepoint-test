@@ -4,6 +4,7 @@ import NotAvailable from './NotAvailable';
 import JSMpeg from '@cycjimmy/jsmpeg-player';
 import { DP_VIDEO_URL, sendGetVideoEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
 import io from 'socket.io-client';
+import 'dotenv/config';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -16,20 +17,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const VideoBox = ({ active, height, src, ws }) => {
+const VideoBox = ({ active, height, src, ws, type }) => {
     const classes = useStyles({ height });
     const imageRef = useRef();
     const [isValidSrc, setIsValidSrc] = useState(true);
 
     useEffect(() => {
         if (ws) {
-            // const player = new JSMpeg.Player('ws://localhost:5001', {
-            //     canvas: imageRef.current,
-            // })
-            // player.autoplay = true;
-            // player.loop = true;
-            const socket = io('http://localhost:5001');
-            socket.on('data', data => {
+            const socket = io(process.env.REACT_APP_VIDEO_URL);
+            socket.on(type === 'drone' ? 'dronedata' : 'dronepointdata', data => {
                 imageRef.current.src = 'data:image/jpeg;base64,' + data;
             })
             socket.on('connect', e => {

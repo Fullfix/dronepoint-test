@@ -26,7 +26,7 @@ class DPCamera:
                 self.lastframe = frame
 
 # Init camera
-dp_camera = DPCamera('rtsp://192.168.194.141:8554/video')
+dp_camera = DPCamera('rtsp://192.168.194.121:8554/video')
 drone_camera = DPCamera('http://192.168.194.120:8080/stream?topic=/main_camera/image_raw')
 
 # # Dronepoint camera
