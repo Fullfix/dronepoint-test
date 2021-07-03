@@ -1,4 +1,4 @@
-import { Box, Button, makeStyles, Typography } from '@material-ui/core'
+import { Box, Button, makeStyles, Typography, useMediaQuery } from '@material-ui/core'
 import React, { useContext, useState } from 'react'
 import { DronepointContext } from '../contexts/DronepointProvider';
 import { getAllCells } from '../utils/cells';
@@ -11,6 +11,9 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        [theme.breakpoints.down('sm')]: {
+            paddingBottom: 10,
+        }
     },
     cellsSelect: {
         marginBottom: 10,
@@ -18,9 +21,15 @@ const useStyles = makeStyles(theme => ({
     },
     stateBox: {
         marginTop: 20, 
+        [theme.breakpoints.down('sm')]: {
+            marginTop: 10,
+        }
     },
     state: {
         fontSize: 32,
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 28,
+        }
     },
 }));
 
@@ -28,6 +37,7 @@ const ActionBox = ({ cell, allCells, onCellChange, onTest }) => {
     const classes = useStyles();
     const { data, isConnected } = useContext(DronepointContext); 
     const [open, setOpen] = useState(false);
+    const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
     const handleSubmit = (password) => {
         onTest(password);
@@ -48,11 +58,11 @@ const ActionBox = ({ cell, allCells, onCellChange, onTest }) => {
             <Cells allCells={allCells} value={cell} onChange={onCellChange}
             className={classes.cellsSelect} 
             disabled={buttonDisabled} />
-            <Button variant="contained" color="primary" size="large"
+            <Button variant="contained" color="primary" size={isMobile ? 'small' : 'large'}
             onClick={handleOpen}
             disabled={buttonDisabled}
             >
-                <Typography variant="h3">Execute Test</Typography>
+                <Typography variant={isMobile ? 'h4' : 'h3'}>Execute Test</Typography>
             </Button>
             <Box className={classes.stateBox}>
                 <Typography variant="h2" align="center" className={classes.state}>

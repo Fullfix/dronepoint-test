@@ -12,14 +12,16 @@ const useStyles = makeStyles(theme => ({
         fontSize: 50,
         marginTop: 10,
         marginBottom: 10,
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 30,
+            marginTop: 5,
+            marginBottom: 5,
+        }
     },
     statusBox: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-    },
-    text: {
-        fontSize: 32,
     },
 }));
 

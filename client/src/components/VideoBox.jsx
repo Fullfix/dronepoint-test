@@ -5,6 +5,7 @@ import JSMpeg from '@cycjimmy/jsmpeg-player';
 import { DP_VIDEO_URL, sendGetVideoEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
 import io from 'socket.io-client';
 import 'dotenv/config';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const VideoBox = ({ active, height, src, ws, type }) => {
+const VideoBox = ({ active, height, src, ws, type, className }) => {
     const classes = useStyles({ height });
     const imageRef = useRef();
     const [isValidSrc, setIsValidSrc] = useState(true);
@@ -37,13 +38,13 @@ const VideoBox = ({ active, height, src, ws, type }) => {
     const handleError = () => setIsValidSrc(false);
 
     if (!isValidSrc) return (
-        <Box className={classes.root}>
+        <Box className={clsx(classes.root, className)}>
             <NotAvailable />
         </Box>
     )
     
     return (
-        <Box className={classes.root}>
+        <Box className={clsx(classes.root, className)}>
             {!ws && <img className={classes.image} ref={imageRef} src={src} onError={handleError}/>}
             {/* {ws && <canvas className={classes.image} ref={imageRef} onError={handleError}/>} */}
             {ws && <img className={classes.image} ref={imageRef} src={src} />}

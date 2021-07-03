@@ -3,7 +3,10 @@ import React from 'react'
 
 const useStyles = makeStyles(theme => ({
     text: {
-        fontSize: 28
+        fontSize: 28,
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 18,
+        },
     },
 }));
 

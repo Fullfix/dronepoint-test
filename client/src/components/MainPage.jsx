@@ -1,9 +1,8 @@
-import { Box, Divider, makeStyles } from '@material-ui/core'
+import { Box, Divider, makeStyles, useMediaQuery } from '@material-ui/core'
 import React, { useContext, useState } from 'react'
 import { useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { DronepointContext } from '../contexts/DronepointProvider';
-import { DP_VIDEO_URL, DRONE_CAMERA_URL } from '../socket';
 import { getAllCells } from '../utils/cells';
 import ActionBox from './ActionBox';
 import DroneInfo from './DroneInfo';
@@ -29,6 +28,22 @@ const useStyles = makeStyles(theme => ({
     right: {
         flex: '33%',
     },
+    mobileBox: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'stretch',
+        height: 'max(100vh, 900px)',
+    },
+    mobileVideo: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'stretch',
+        widthL: '100%',
+        flex: 'auto',
+    },
+    mobileVideoItem: {
+        flex: '50%',
+    },
 }));
 
 const MainPage = () => {
@@ -36,6 +51,7 @@ const MainPage = () => {
     const { data, startTest, isConnected, video, connection } = useContext(DronepointContext);
     const [cell, setCell] = useState(0);
     const allCells = getAllCells();
+    const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
     const handleTestStart = (password) => {
         if (isConnected) {
@@ -48,6 +64,47 @@ const MainPage = () => {
     const handleCellChange = (e) => {
         setCell(e.target.value);
     }
+
+    if (isMobile) return (
+        <Box className={classes.mobileBox}>
+            <Box>
+                <DroneMap
+                height={250}
+                dronePos={data.pos}
+                droneHistory={data.drone_history}
+                dronepointPos={data.dronepoint_pos}
+                isConnected={connection.drone}
+                />
+            </Box>
+            <Divider />
+            <Box>
+                <SystemStatus />
+                <Divider />
+                <ActionBox
+                allCells={allCells}
+                cell={cell} 
+                onCellChange={handleCellChange} 
+                onTest={handleTestStart}
+                />
+            </Box>
+            <Box className={classes.mobileVideo}>
+                <VideoBox
+                className={classes.mobileVideoItem}
+                active={true}
+                src={video.dronepoint}
+                type="dronepoint"
+                />
+                <Divider />
+                <VideoBox
+                className={classes.mobileVideoItem}
+                active={true}
+                ws={true}
+                type="drone"
+                src={'/'}
+                />
+            </Box>
+        </Box>
+    )
 
     return (
         <React.Fragment>
