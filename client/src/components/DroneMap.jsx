@@ -26,7 +26,7 @@ const DroneMap = ({ height, isConnected, dronePos, dronepointPos, droneHistory }
     
     return (
         <Box className={classes.root}>
-            <Map defaultState={{ center: dronePos, zoom: 15 }} width={'100%'} height={'100%'}>
+            <Map defaultState={{ center: dronePos, zoom: 19 }} width={'100%'} height={'100%'}>
                 <Placemark geometry={dronePos} options={{
                     iconLayout: 'default#image',
                     iconImageHref: '/drone.png',
