@@ -28,9 +28,18 @@ class Mavlink:
         print('test no flight')
         self.executing = True
         
-        self.execute_iteration(cell)
+        # self.execute_iteration(cell)
+        self.execute_flight(cell)
 
         self.executing = False
+    
+    def execute_flight(self, cell=None):
+        print(f'Iteration flight started')
+        start_time = time.time()
+
+        time_flight = self.drone_controller.execute_flight()
+
+        print(f'Flight Ended in {time.time() - start_time} s')
 
     # Iterate for one cell (x, y, z)
     def execute_iteration(self, cell):
@@ -68,8 +77,8 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # # Execute drone flight
-        # self.drone_controller.execute_flight()
+        # Execute drone flight
+        # time_flight = self.drone_controller.execute_flight()
         time_flight = 0.0
 
         # Delay
@@ -98,8 +107,7 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        time_total = time_get_from_user + time_load_drone + time_flight 
-        + time_unload_drone + time_unload_to_user
+        time_total = time_get_from_user + time_load_drone + time_flight + time_unload_drone + time_unload_to_user
 
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')
@@ -130,6 +138,7 @@ class Mavlink:
             "executing": self.executing,
             "state": self.get_state(),
             "dronepoint_pos": [config.DRONEPOINT_LAT, config.DRONEPOINT_LON],
+            "drone_history": self.drone_controller.history,
             "connection": {
                 "drone": self.drone_controller.connected,
                 "dronepoint": self.dronepoint_controller.connected,

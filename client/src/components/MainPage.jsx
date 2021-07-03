@@ -32,15 +32,15 @@ const useStyles = makeStyles(theme => ({
 
 const MainPage = () => {
     const classes = useStyles();
-    const { data, startTest, connection, video } = useContext(DronepointContext);
+    const { data, startTest, isConnected, video } = useContext(DronepointContext);
     const [cell, setCell] = useState(0);
     const allCells = getAllCells();
 
     const handleTestStart = (password) => {
-        if (connection.drone) {
+        if (isConnected) {
             startTest(allCells[cell], password)
         } else {
-            toast.error('Drone not connected');
+            toast.error('Drone or Dronepoint not connected');
         }
     }
 

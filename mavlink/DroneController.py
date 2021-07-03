@@ -25,6 +25,8 @@ class DroneController:
         self.alt = 0
         self.armed = False
         self.landed_state = 0
+        # History of position
+        self.history = []
         # Mavlink message handlers
         self.handlers = {
             mavlink.MAVLINK_MSG_ID_GLOBAL_POSITION_INT: self.GLOBAL_POSITION_INT_HANDLER,
@@ -105,12 +107,15 @@ class DroneController:
         pos = [msg_dict['lat'] / 10000000, msg_dict['lon'] / 10000000]
 
         # Check if Difference is big enough
-        pos_difference = [abs(pos[i] - self.pos[i]) * 10000000 for i in range(len(pos))]
+        last_pos = self.history[-1] if len(self.history) > 0 else self.pos[:]
+        pos_difference = [abs(pos[i] - last_pos[i]) * 10000000 for i in range(len(pos))]
         alt = msg_dict['alt'] / 1000
         alt_difference = abs(self.alt - alt)
-        # if pos_difference[0] > 5 or pos_difference[1] > 5 or alt_difference >= 1:
         self.pos = pos[:]
         self.alt = alt
+        # If difference is big enough, update history
+        if pos_difference[0] > config.MIN_POS_DIFFERENCE or pos_difference[1] > config.MIN_POS_DIFFERENCE:
+            self.history.append(pos[:])
         # print(f'Update pos to {self.pos[0]} {self.pos[1]} {self.alt}')
     
     # Heartbeat listener: update drone's state (armed)
@@ -142,6 +147,8 @@ class DroneController:
             altitude)
     
     def execute_flight(self):
+        # Clear old history
+        self.history = [self.pos[:]]
         # Start mission
         self.start_flight_mission()
         # Cooldown

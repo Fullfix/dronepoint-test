@@ -27,6 +27,8 @@ const DroneInfo = ({ height }) => {
         dronepoint_pos: `[${data.dronepoint_pos[0]}, ${data.dronepoint_pos[1]}]`,
         state: data.state.toUpperCase(),
     }
+
+    const filterInfo = ([key, value]) => key !== 'drone_history'; 
     return (
         <Box className={classes.root}>
             <Table size="small" className={classes.table}>
@@ -41,7 +43,9 @@ const DroneInfo = ({ height }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.entries(displayData).map(([key, value]) => (
+                    {Object.entries(displayData)
+                    .filter(filterInfo)
+                    .map(([key, value]) => (
                         <TableRow key={key}>
                             <TableCell>{key.toUpperCase()}</TableCell>
                             <TableCell>{formattedValue(value)}</TableCell>

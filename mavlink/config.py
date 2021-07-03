@@ -12,8 +12,8 @@ class DronepointConfig:
     CUSTOM_MODE_GOTO_CELL = 5
 
     # Connection
-    DRONE_CONNECTION = 'udpout:192.168.194.132:14550'
-    # DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
+    # DRONE_CONNECTION = 'udpout:192.168.194.132:14550'
+    DRONE_CONNECTION = 'udpin:0.0.0.0:14540'
     DRONEPOINT_CONNECTION = 'udpout:192.168.194.141:14590'
     DRONE_CONNECTION_TIMEOUT = 3
     DRONEPOINT_CONNECTION_TIMEOUT = 3
@@ -21,6 +21,9 @@ class DronepointConfig:
     # Flight
     FLIGHT_DISTANCE = 0.00018 # 20 meters
     FLIGHT_ALT = 20
+    
+    # Minimum difference of position to update history
+    MIN_POS_DIFFERENCE = 100
 
     # State
     IDLE = 'idle'

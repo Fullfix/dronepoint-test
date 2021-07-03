@@ -1,5 +1,5 @@
 import { Box, makeStyles, Typography } from '@material-ui/core'
-import { Map, Placemark } from 'react-yandex-maps';
+import { Map, Placemark, Polyline } from 'react-yandex-maps';
 import React, { useCallback, useContext, useMemo } from 'react'
 import { DronepointContext } from '../contexts/DronepointProvider';
 
@@ -40,6 +40,14 @@ const DroneMap = ({ height }) => {
                     },
                 }}/>
                 <Placemark geometry={data.dronepoint_pos} />
+                <Polyline 
+                geometry={data.drone_history}
+                options={{
+                    strokeColor: '#F24949',
+                    strokeWidth: 4,
+                    strokeOpacity: 0.8,
+                }}
+                />
             </Map>
         </Box>
     )
