@@ -1,5 +1,6 @@
 import { Box, Divider, makeStyles } from '@material-ui/core'
 import React, { useContext, useState } from 'react'
+import { useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { DronepointContext } from '../contexts/DronepointProvider';
 import { DP_VIDEO_URL, DRONE_CAMERA_URL } from '../socket';
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 const MainPage = () => {
     const classes = useStyles();
-    const { data, startTest, isConnected, video } = useContext(DronepointContext);
+    const { data, startTest, isConnected, video, connection } = useContext(DronepointContext);
     const [cell, setCell] = useState(0);
     const allCells = getAllCells();
 
@@ -52,7 +53,13 @@ const MainPage = () => {
         <React.Fragment>
             <Box className={classes.main}>
                 <Box className={classes.left}>
-                    <DroneMap height={400}/>
+                    <DroneMap
+                    height={400}
+                    dronePos={data.pos}
+                    droneHistory={data.drone_history}
+                    dronepointPos={data.dronepoint_pos}
+                    isConnected={connection.drone}
+                    />
                     <Divider />
                     <DroneInfo height={360 + 16} />
                 </Box>

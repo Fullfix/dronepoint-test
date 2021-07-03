@@ -11,9 +11,8 @@ const useStyles = makeStyles(theme => ({
 
 const droneSize = 80;
 
-const DroneMap = ({ height }) => {
+const DroneMap = ({ height, isConnected, dronePos, dronepointPos, droneHistory }) => {
     const classes = useStyles({ height });
-    const { data, connection: { drone: isConnected } } = useContext(DronepointContext);
 
     if (!isConnected) {
         return (
@@ -27,8 +26,8 @@ const DroneMap = ({ height }) => {
     
     return (
         <Box className={classes.root}>
-            <Map defaultState={{ center: data.pos, zoom: 15 }} width={'100%'} height={'100%'}>
-                <Placemark geometry={data.pos} options={{
+            <Map defaultState={{ center: dronePos, zoom: 15 }} width={'100%'} height={'100%'}>
+                <Placemark geometry={dronePos} options={{
                     iconLayout: 'default#image',
                     iconImageHref: '/drone.png',
                     iconImageSize: [droneSize, droneSize],
@@ -39,9 +38,9 @@ const DroneMap = ({ height }) => {
                         radius: 20
                     },
                 }}/>
-                <Placemark geometry={data.dronepoint_pos} />
+                <Placemark geometry={dronepointPos} />
                 <Polyline 
-                geometry={data.drone_history}
+                geometry={droneHistory}
                 options={{
                     strokeColor: '#F24949',
                     strokeWidth: 4,
