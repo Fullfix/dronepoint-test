@@ -82,7 +82,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
             loading: loading,
             startTest: (cell, password) => sendTestEvent(cell, password),
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
-            isConnected: droneConnected,
+            isConnected: dronepointConnected,
             video: { drone: droneFrame, dronepoint: dpFrame },
         }}>
             {children}

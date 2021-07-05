@@ -71,7 +71,7 @@ class DronepointController:
                 0,
                 0,
             )
-            time.sleep(1)
+            time.sleep(0.5)
 
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):

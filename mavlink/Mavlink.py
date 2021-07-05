@@ -25,11 +25,11 @@ class Mavlink:
 
     # Main Test
     def execute_test(self, cell):
-        print('test no flight')
+        print('test dronepoint')
         self.executing = True
         
-        # self.execute_iteration(cell)
-        self.execute_flight(cell)
+        self.execute_iteration(cell)
+        # self.execute_flight(cell)
 
         self.executing = False
     
@@ -78,8 +78,8 @@ class Mavlink:
         time.sleep(config.DRONEPOINT_DELAY)
 
         # Execute drone flight
-        # time_flight = self.drone_controller.execute_flight()
-        time_flight = 0.0
+        time_flight = self.drone_controller.execute_flight()
+        # time_flight = 0.0
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
