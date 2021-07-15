@@ -80,7 +80,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         <DronepointContext.Provider value={{
             data: data,
             loading: loading,
-            startTest: (cell, password) => sendTestEvent(cell, password),
+            startTest: (cell, password, testType) => sendTestEvent(cell, password, testType),
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
             isConnected: dronepointConnected,
             video: { drone: droneFrame, dronepoint: dpFrame },

@@ -23,26 +23,74 @@ class Mavlink:
     def connected(self):
         return self.drone_controller.connected and self.dronepoint_controller.connected
 
+    # Validate if cell exists
+    def validate_cell(self, cell):
+        x, y, z = cell
+        if y == 3:
+            if x < 0 or x > 4:
+                return False
+            if z < 0 or z > 6:
+                return False
+            if (
+                x == 1 and z == 1 or
+                x == 3 and z == 1 or
+                x == 1 and z == 2 or
+                x == 2 and z == 2 or
+                x == 3 and z == 2 or
+                x == 1 and z == 3 or
+                x == 2 and z == 3 or
+                x == 3 and z == 3 ):
+                return False
+        elif y == 2:
+            return False
+        else:
+            return False
+        return True
+
+    # Validate if it's possible to start test
+    def validate_test(self, test_type):
+        if test_type == 'drone':
+            return self.drone_controller.connected
+        elif test_type == 'dronepoint':
+            return self.dronepoint_controller.connected
+        elif test_type == 'full':
+            return self.connected
+
     # Main Test
-    def execute_test(self, cell):
-        print('test dronepoint')
-        self.executing = True
+    def execute_test(self, cell, test_type):
+        # Validate Cell
+        if test_type != 'drone' and not self.validate_cell(cell):
+            return print(f"Can't start {test_type} test. Invalid Cell")
+
+        # Validate Test Type
+        if not self.validate_test(test_type):
+            return print(f"Can't start {test_type} Test. Drone or Dronepoint not connected")
         
-        self.execute_iteration(cell)
-        # self.execute_flight(cell)
+        print(f'Test Dronepoint type "{test_type}"')
+        self.executing = True
+
+        # Start Iteration depending on test type
+        if test_type == 'drone':
+            self.execute_flight()
+        elif test_type == 'dronepoint':
+            self.execute_iteration(cell, flight=False)
+        elif test_type == 'full':
+            self.execute_iteration(cell, flight=True)
+        else:
+            print('Error. Invalid Test Type')
 
         self.executing = False
     
-    def execute_flight(self, cell=None):
+    def execute_flight(self):
         print(f'Iteration flight started')
         start_time = time.time()
 
-        time_flight = self.drone_controller.execute_flight()
+        self.drone_controller.execute_flight()
 
         print(f'Flight Ended in {time.time() - start_time} s')
 
     # Iterate for one cell (x, y, z)
-    def execute_iteration(self, cell):
+    def execute_iteration(self, cell, flight=False):
         # Debug
         print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) started')
 
@@ -68,27 +116,17 @@ class Mavlink:
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
-        # # (Open): Get from user + Load Drone
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_OPENING,
-        #     0, 0, 0, 3
-        # )
-
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
 
         # Execute drone flight
-        time_flight = self.drone_controller.execute_flight()
-        # time_flight = 0.0
+        if flight:
+            time_flight = self.drone_controller.execute_flight()
+        else:
+            time_flight = 0.0
 
         # Delay
         time.sleep(config.DRONEPOINT_DELAY)
-
-        # # (Close): Unload Drone + Unload to user
-        # self.dronepoint_controller.execute_command(
-        #     config.STATE_CLOSING,
-        #     0, 0, 0, 3
-        # )
 
         time_unload_drone = self.dronepoint_controller.execute_command(
             config.STATE_UNLOADING_DRONE,
@@ -121,11 +159,11 @@ class Mavlink:
         print(f'Total (no delay): {round(time_total, 2)} s')
         print(f'Total: {round(time.time() - start_time, 2)} s')
     
-    def test(self, cell):
+    def test(self, cell, test_type):
         # Debug
         print('Start Executing Test')
         # Start async thread for test execution
-        thread_test = threading.Thread(target=self.execute_test, args=(cell,))
+        thread_test = threading.Thread(target=self.execute_test, args=(cell, test_type))
         thread_test.start()
     
     # Retrieve drone & dronepoint data
@@ -165,29 +203,6 @@ class Mavlink:
         if self.dronepoint_controller.custom_mode in state_to_test.keys():
             return state_to_test[self.dronepoint_controller.custom_mode]
         return config.IDLE
-    
-    def check_cell(self, cell):
-        x, y, z = cell
-        if y == 3:
-            if x < 0 or x > 4:
-                return False
-            if z < 0 or z > 6:
-                return False
-            if (
-                x == 1 and z == 1 or
-                x == 3 and z == 1 or
-                x == 1 and z == 2 or
-                x == 2 and z == 2 or
-                x == 3 and z == 2 or
-                x == 1 and z == 3 or
-                x == 2 and z == 3 or
-                x == 3 and z == 3 ):
-                return False
-        elif y == 2:
-            return False
-        else:
-            return False
-        return True
 
 if __name__ == '__main__':
     mavlink = Mavlink()

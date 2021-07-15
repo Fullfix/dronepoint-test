@@ -34,8 +34,8 @@ export const sendGetDataEvent = (password) => {
     socket.emit('getdata', { password });
 }
 
-export const sendTestEvent = (cell, password) => {
-    socket.emit('test', { cell, password });
+export const sendTestEvent = (cell, password, testType) => {
+    socket.emit('test', { cell, password, test_type: testType });
 }
 
 export const login = async (password) => {

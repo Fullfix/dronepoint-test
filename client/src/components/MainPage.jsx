@@ -53,12 +53,9 @@ const MainPage = () => {
     const allCells = getAllCells();
     const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
-    const handleTestStart = (password) => {
-        if (isConnected) {
-            startTest(allCells[cell], password)
-        } else {
-            toast.error('Drone or Dronepoint not connected');
-        }
+    const handleTestStart = (password, testType) => {
+        console.log(testType);
+        startTest(allCells[cell], password, testType)
     }
 
     const handleCellChange = (e) => {

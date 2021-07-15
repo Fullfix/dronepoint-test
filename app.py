@@ -60,16 +60,7 @@ def send_message(json):
 def start_test(json):
     if json['password'] != password:
         return emit('error', 'Invalid Password')
-    if not mavlink.check_cell(json['cell']):
-        print("Can't start test")
-        return emit('error', 'Invalid cell')
-    mavlink.test(json['cell'])
-    # if mavlink.connected:
-    #     print(mavlink.connected)
-    #     mavlink.test(json['cell'])
-    # else:
-    #     emit('error', "Can't start dronepoint test")
-    #     print("Can't start test")
+    mavlink.test(json['cell'], json['test_type'])
 
 
 if __name__ == "__main__":
