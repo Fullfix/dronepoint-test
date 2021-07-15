@@ -12,17 +12,11 @@ const stream = new rtsp.FFMpeg({
 })
 
 const dpStream = new rtsp.FFMpeg({
-  input: 'rtsp://192.168.194.141:8554/video',
-  rate: 10,
-  arguments: [
-    '-rtsp_transport', 'tcp', 
-    '-vf', 'select=concatdec_select', 
-    '-af', 'aselect=concatdec_select,aresample=async=1',
-  ],
+  input: 'http://192.168.194.127:8080/stream?topic=/main_camera/image_raw',
 })
 
 dpStream.on('data', e => {
-  console.log("YEEEEE");
+  // console.log("YEEEEE");
 });
 
 dpStream.on('error', e => {
@@ -57,7 +51,12 @@ io.on('connection', (socket) => {
     console.log('sending drone');
     socket.emit('dronedata', data.toString('base64'))
   }
+  const dpPipeStream = (data) => {
+    console.log('sending dronepoint');
+    socket.emit('dronepointdata', data.toString('base64'));
+  }
   stream.on('data', pipeStream);
+  dpStream.on('data', dpPipeStream);
   socket.on('disconnect', () => {
     stream.removeListener('data', pipeStream);
   });

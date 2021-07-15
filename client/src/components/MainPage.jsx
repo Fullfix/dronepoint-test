@@ -130,7 +130,8 @@ const MainPage = () => {
                 <Box className={classes.right}>
                     <VideoBox
                     active={true}
-                    src={video.dronepoint}
+                    ws={true}
+                    src={'/'}
                     height={400}
                     type="dronepoint"
                     />
