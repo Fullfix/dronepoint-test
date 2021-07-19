@@ -12,7 +12,7 @@ const stream = new rtsp.FFMpeg({
 })
 
 const dpStream = new rtsp.FFMpeg({
-  input: 'http://192.168.194.127:8080/stream?topic=/main_camera/image_raw',
+  input: 'http://192.168.194.182:8080/stream?topic=/main_camera/image_raw',
 })
 
 dpStream.on('data', e => {
