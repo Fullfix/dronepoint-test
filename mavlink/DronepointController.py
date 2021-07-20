@@ -141,8 +141,9 @@ class DronepointController:
     
     # Heartbeat listener (0): update dronepoint's custom mode
     def HEARTBEAT_HANDLER(self, msg):
-        state = msg['custom_mode']
-        if self.custom_mode != state:
-            self.custom_mode = state
-            # Debug
-            print(f'Changed to custom mode {state}')
+        if msg['type'] == 31:
+            state = msg['custom_mode']
+            if self.custom_mode != state:
+                self.custom_mode = state
+                # Debug
+                print(f'Changed to custom mode {state}')
