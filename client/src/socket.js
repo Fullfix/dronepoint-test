@@ -26,8 +26,20 @@ export const unsubscribeVideoEvent = () => {
     socket.removeAllListeners('video');
 }
 
+export const subscribeLogEvent = (cb) => {
+    socket.on('log', cb);
+}
+
+export const unsubscribeLogEvent = () => {
+    socket.removeAllListeners('log');
+}
+
 export const sendGetVideoEvent = () => {
     socket.emit('getvideo');
+}
+
+export const sendLogEvent = () => {
+    socket.emit('getlog');
 }
 
 export const sendGetDataEvent = (password) => {

@@ -7,6 +7,7 @@ from pymavlink import mavutil, mavwp
 from pymavlink.mavutil import mavlink
 import math
 from .config import DronepointConfig as config
+from .PrintObserver import observer
 
 
 class DronepointController:
@@ -23,7 +24,7 @@ class DronepointController:
         }
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
-        print('Dronepoint initialized. Waiting for connection')
+        observer.write('Dronepoint initialized. Waiting for connection')
         # Start sending heartbeat
         thread_send = threading.Thread(target=self.send_heartbeats)
         thread_send.start()
@@ -37,7 +38,7 @@ class DronepointController:
     # Test code
     def main(self):
         # Debug
-        print('Started Dronepoint commands')
+        observer.write('Started Dronepoint commands')
         self.execute_command(
             config.STATE_GETTING_FROM_USER,
             0, 3, 0,
@@ -75,14 +76,14 @@ class DronepointController:
 
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
-        print('Started watching messages')
+        observer.write('Started watching messages')
         while True:
             msg = self.mavconn.recv_match(blocking=True, timeout=config.DRONEPOINT_CONNECTION_TIMEOUT)
             # Check if msg is None
             if not msg:
                 if self.connected == True:
                     # Debug
-                    print('Dronepoint disconnected')
+                    observer.write('Dronepoint disconnected')
                     pass
                 # Set state to disconnected
                 self.connected = False
@@ -90,7 +91,7 @@ class DronepointController:
             else:
                 if self.connected == False:
                     # Debug
-                    print('Dronepoint connected')
+                    observer.write('Dronepoint connected')
                 # Set state to connected
                 self.connected = True
             # Style messages
@@ -132,11 +133,11 @@ class DronepointController:
                 break
             # Debug
             if i % 10 == 0:
-                print('Executing command')
+                observer.write('Executing command')
             # Cooldown
             time.sleep(1)
         # Debug
-        print(f'Command {mode} finished in time {time.time() - start_time} s')
+        observer.write(f'Command {mode} finished in time {time.time() - start_time} s')
         return time.time() - start_time
     
     # Heartbeat listener (0): update dronepoint's custom mode
@@ -146,4 +147,4 @@ class DronepointController:
             if self.custom_mode != state:
                 self.custom_mode = state
                 # Debug
-                print(f'Changed to custom mode {state}')
+                observer.write(f'Changed to custom mode {state}')

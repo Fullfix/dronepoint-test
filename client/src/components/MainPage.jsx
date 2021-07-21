@@ -7,6 +7,7 @@ import { getAllCells } from '../utils/cells';
 import ActionBox from './ActionBox';
 import DroneInfo from './DroneInfo';
 import DroneMap from './DroneMap';
+import Logger from './Logger';
 import Logo from './Logo';
 import SystemStatus from './SystemStatus';
 import VideoBox from './VideoBox';
@@ -24,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     },
     middle: {
         flex: '34%',
+        height: '806px',
+        display: 'flex',
+        flexDirection: 'column',
     },
     right: {
         flex: '33%',
@@ -126,6 +130,7 @@ const MainPage = () => {
                     onCellChange={handleCellChange} 
                     onTest={handleTestStart}
                     />
+                    <Logger />
                 </Box>
                 <Box className={classes.right}>
                     <VideoBox

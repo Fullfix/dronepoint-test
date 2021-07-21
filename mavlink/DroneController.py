@@ -8,6 +8,7 @@ from pymavlink import mavutil, mavwp
 from pymavlink.mavutil import mavlink
 import math
 from .config import DronepointConfig as config
+from .PrintObserver import observer
 
 # Initialize waypoint
 wp = mavwp.MAVWPLoader()
@@ -36,7 +37,7 @@ class DroneController:
         }
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
-        print('Drone initialized. Waiting for connection')
+        observer.write('Drone initialized. Waiting for connection')
         # Start sending heartbeat
         thread_send = threading.Thread(target=self.send_heartbeats)
         thread_send.start()
@@ -48,7 +49,7 @@ class DroneController:
     
     # Listen for mavlink messages and apply message handlers
     def listen_messages(self):
-        print('Started watching messages')
+        observer.write('Started watching messages')
         while True:
             if not self.listening:
                 time.sleep(1)
@@ -59,13 +60,13 @@ class DroneController:
                 # Set state to disconnected
                 if self.connected == True:
                     # Debug
-                    print('Drone disconnected')
+                    observer.write('Drone disconnected')
                 self.connected = False
                 continue
             else:
                 if self.connected == False:
                     # Debug
-                    print('Drone connected')
+                    observer.write('Drone connected')
                 # Set state to connected
                 self.connected = True
             # Style messages
@@ -83,11 +84,11 @@ class DroneController:
                 # Execute handlers
                 self.handlers[msg_dict['msgid']](msg_dict)
             # if msg_dict['msgid'] in range(37, 48):
-            #     print('TRAITOR')
-            #     print(msg_dict['msgid'])
+            #     observer.write('TRAITOR')
+            #     observer.write(msg_dict['msgid'])
             # if msg_dict['msgid'] == 47:
-            #     print(f'mission ack {msg_dict["type"]}')
-            #     print(msg.get_type())
+            #     observer.write(f'mission ack {msg_dict["type"]}')
+            #     observer.write(msg.get_type())
     
     # Send random heartbeats to receive messages from Drone
     def send_heartbeats(self):
@@ -116,7 +117,7 @@ class DroneController:
         # If difference is big enough, update history
         if pos_difference[0] > config.MIN_POS_DIFFERENCE or pos_difference[1] > config.MIN_POS_DIFFERENCE:
             self.history.append(pos[:])
-        # print(f'Update pos to {self.pos[0]} {self.pos[1]} {self.alt}')
+        # observer.write(f'Update pos to {self.pos[0]} {self.pos[1]} {self.alt}')
     
     # Heartbeat listener: update drone's state (armed)
     def HEARTBEAT_HANDLER(self, msg_dict):
@@ -129,11 +130,11 @@ class DroneController:
         # Check if different from previous
         if landed_state != self.landed_state:
             self.landed_state = landed_state
-            print(f"Updated Landed State to {landed_state}")
+            observer.write(f"Updated Landed State to {landed_state}")
     
     # Set home
     def set_home(self, homelocation, altitude):
-        print('Setting Home')
+        observer.write('Setting Home')
         self.mavconn.mav.command_long_send(
             self.mavconn.target_system, self.mavconn.target_component,
             mavutil.mavlink.MAV_CMD_DO_SET_HOME,
@@ -159,14 +160,14 @@ class DroneController:
         while self.armed:
             # Debug
             time.sleep(5)
-            print('Flying')
+            observer.write('Flying')
         # Debug
-        print(f'Finished Flight in {time.time() - start_time} s')
+        observer.write(f'Finished Flight in {time.time() - start_time} s')
         return time.time() - start_time
 
     # Initiate flight mission
     def start_flight_mission(self):
-        print('Initiating Flight Mission')
+        observer.write('Initiating Flight Mission')
         wp.clear()
         # Frame
         frame = mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
@@ -287,12 +288,12 @@ class DroneController:
 
         for i in range(wp.count()):
             msg = self.mavconn.recv_match(type=['MISSION_REQUEST'], blocking=True)
-            print(msg)
+            observer.write(msg)
             self.mavconn.mav.send(wp.wp(msg.seq))
-            print(f'Sending waypoint {msg.seq}')
+            observer.write(f'Sending waypoint {msg.seq}')
 
         # Start Mission
         self.listening = True
         time.sleep(1)
         self.mavconn.set_mode_auto()
-        print('Started Mission')
+        observer.write('Started Mission')

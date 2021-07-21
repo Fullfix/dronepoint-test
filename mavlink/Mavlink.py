@@ -9,6 +9,7 @@ import math
 from .DroneController import DroneController
 from .DronepointController import DronepointController
 from .config import DronepointConfig as config
+from .PrintObserver import observer
 
 class Mavlink:
     def __init__(self):
@@ -60,13 +61,13 @@ class Mavlink:
     def execute_test(self, cell, test_type):
         # Validate Cell
         if test_type != 'drone' and not self.validate_cell(cell):
-            return print(f"Can't start {test_type} test. Invalid Cell")
+            return observer.write(f"Can't start {test_type} test. Invalid Cell")
 
         # Validate Test Type
         if not self.validate_test(test_type):
-            return print(f"Can't start {test_type} Test. Drone or Dronepoint not connected")
+            return observer.write(f"Can't start {test_type} Test. Drone or Dronepoint not connected")
         
-        print(f'Test Dronepoint type "{test_type}"')
+        observer.write(f'Test Dronepoint type "{test_type}"')
         self.executing = True
 
         # Start Iteration depending on test type
@@ -77,22 +78,22 @@ class Mavlink:
         elif test_type == 'full':
             self.execute_iteration(cell, flight=True)
         else:
-            print('Error. Invalid Test Type')
+            observer.write('Error. Invalid Test Type')
 
         self.executing = False
     
     def execute_flight(self):
-        print(f'Iteration flight started')
+        observer.write(f'Iteration flight started')
         start_time = time.time()
 
         self.drone_controller.execute_flight()
 
-        print(f'Flight Ended in {time.time() - start_time} s')
+        observer.write(f'Flight Ended in {time.time() - start_time} s')
 
     # Iterate for one cell (x, y, z)
     def execute_iteration(self, cell, flight=False):
         # Debug
-        print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) started')
+        observer.write(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) started')
 
         # Time Counter
         start_time = time.time()
@@ -148,20 +149,20 @@ class Mavlink:
         time_total = time_get_from_user + time_load_drone + time_flight + time_unload_drone + time_unload_to_user
 
         # Debug
-        print(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')
+        observer.write(f'Iteration for cell ({cell[0]}, {cell[1]}, {cell[2]}) ended in {time.time() - start_time} s')
 
         # Final Message
-        print(f'Get From User: {round(time_get_from_user, 2)} s')
-        print(f'Load Drone: {round(time_load_drone, 2)} s')
-        print(f'Flight: {round(time_flight, 2)} s')
-        print(f'Unload Drone: {round(time_unload_drone, 2)} s')
-        print(f'Unload To User: {round(time_unload_to_user, 2)} s')
-        print(f'Total (no delay): {round(time_total, 2)} s')
-        print(f'Total: {round(time.time() - start_time, 2)} s')
+        observer.write(f'Get From User: {round(time_get_from_user, 2)} s')
+        observer.write(f'Load Drone: {round(time_load_drone, 2)} s')
+        observer.write(f'Flight: {round(time_flight, 2)} s')
+        observer.write(f'Unload Drone: {round(time_unload_drone, 2)} s')
+        observer.write(f'Unload To User: {round(time_unload_to_user, 2)} s')
+        observer.write(f'Total (no delay): {round(time_total, 2)} s')
+        observer.write(f'Total: {round(time.time() - start_time, 2)} s')
     
     def test(self, cell, test_type):
         # Debug
-        print('Start Executing Test')
+        observer.write('Start Executing Test')
         # Start async thread for test execution
         thread_test = threading.Thread(target=self.execute_test, args=(cell, test_type))
         thread_test.start()

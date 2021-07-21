@@ -1,3 +1,5 @@
+import sys
+from mavlink.PrintObserver import observer
 from flask import Flask, request
 from flask_cors.decorator import cross_origin
 from flask_socketio import SocketIO, emit, send
@@ -40,6 +42,10 @@ def login():
     # return { "text": "Wrong password" }, 400
     return { 'text': 'Done' }
 
+@socketio.on('disconnect')
+def disconnect():
+    observer.unsubscribe_handler()
+
 # Send video
 @socketio.on('getvideo')
 def send_video():
@@ -62,6 +68,9 @@ def start_test(json):
         return emit('error', 'Invalid Password')
     mavlink.test(json['cell'], json['test_type'])
 
+@socketio.on('getlog')
+def send_log():
+    return emit('log', observer.get_messages())
 
 if __name__ == "__main__":
     socketio.run(app)

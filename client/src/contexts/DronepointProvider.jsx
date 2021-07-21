@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify';
-import { login, sendGetDataEvent, sendGetVideoEvent, sendTestEvent, subscribeConnectEvent, 
-    subscribeDataEvent, subscribeErrorEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
+import { login, sendGetDataEvent, sendGetVideoEvent, sendLogEvent, sendTestEvent, subscribeConnectEvent, 
+    subscribeDataEvent, subscribeErrorEvent, subscribeLogEvent, subscribeVideoEvent, unsubscribeVideoEvent } from '../socket';
 
 export const DronepointContext = createContext({
     data: {},
@@ -12,6 +12,7 @@ export const DronepointContext = createContext({
     connection: { drone: false, dronepoint: false },
     video: { drone: null, dronepoint: null },      
     isConnected: false,
+    logInfo: [],
 })
 
 const DronepointProvider = ({ children, timeout=500 }) => {
@@ -21,6 +22,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
     const [loading, setLoading] = useState(true);
     const [dpFrame, setDpFrame] = useState(null);
     const [droneFrame, setDroneFrame] = useState(null);
+    const [logInfo, setLogInfo] = useState([]);
 
     const handleConnectEvent = () => {
         console.log('Connected');
@@ -35,6 +37,10 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         setData(data);
     }
 
+    const handleLogEvent = (data) => {
+        setLogInfo(data);
+    }
+
     const handleErrorEvent = (err) => {
         console.log(err);
         toast.error(err);
@@ -44,6 +50,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
         subscribeDataEvent(handleDataEvent);
         subscribeConnectEvent(handleConnectEvent);
         subscribeErrorEvent(handleErrorEvent);
+        subscribeLogEvent(handleLogEvent);
 
         let check = true;
         const handleVideoEvent = (data) => {
@@ -69,9 +76,14 @@ const DronepointProvider = ({ children, timeout=500 }) => {
             sendGetDataEvent();
         }, timeout);
 
+        const logInterval = setInterval(() => {
+            sendLogEvent();
+        }, timeout);
+
         return () => {
             clearInterval(interval);
             clearInterval(dataInterval);
+            clearInterval(logInterval);
             unsubscribeVideoEvent();
         }
     }, []);
@@ -84,6 +96,7 @@ const DronepointProvider = ({ children, timeout=500 }) => {
             connection: { drone: droneConnected, dronepoint: dronepointConnected },
             isConnected: dronepointConnected && droneConnected,
             video: { drone: droneFrame, dronepoint: dpFrame },
+            logInfo: logInfo,
         }}>
             {children}
         </DronepointContext.Provider>
