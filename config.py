@@ -1,5 +1,6 @@
 from dotenv import dotenv_values
 
 config = dotenv_values('.env')
-password = config['SECRET_CODE']
-stream_video = bool(int(config['STREAM_VIDEO']))
+PASSWORD = config['SECRET_CODE']
+DRONEPOINT_CONNECTION = config['DRONEPOINT_CONNECTION']
+DRONE_CONNECTION = config['DRONE_CONNECTION']

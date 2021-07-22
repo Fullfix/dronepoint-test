@@ -7,9 +7,8 @@ from flask_cors import CORS
 from dotenv import dotenv_values
 import time
 import logging
-from routes.videos import dp_camera, drone_camera
 from mavlink.Mavlink import Mavlink
-from config import password
+from config import PASSWORD
 
 # Init App
 app = Flask(__name__, static_folder='./client/build', static_url_path='/')
@@ -46,14 +45,6 @@ def login():
 def disconnect():
     observer.unsubscribe_handler()
 
-# Send video
-@socketio.on('getvideo')
-def send_video():
-    return emit('video', {
-        'dronepoint': dp_camera.lastframe,
-        'drone': drone_camera.lastframe,
-    })
-
 # Get mavlink data
 @socketio.on('getdata')
 def send_message(json):
@@ -64,7 +55,7 @@ def send_message(json):
 # Start text
 @socketio.on('test')
 def start_test(json):
-    if json['password'] != password:
+    if json['password'] != PASSWORD:
         return emit('error', 'Invalid Password')
     mavlink.test(json['cell'], json['test_type'])
 

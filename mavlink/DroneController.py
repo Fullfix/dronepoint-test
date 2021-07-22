@@ -37,7 +37,7 @@ class DroneController:
         }
         self.mavconn = mavutil.mavlink_connection(url, source_system=255)
         # Debug
-        observer.write('Drone initialized. Waiting for connection')
+        observer.write(f'Drone initialized {url}. Waiting for connection')
         # Start sending heartbeat
         thread_send = threading.Thread(target=self.send_heartbeats)
         thread_send.start()
